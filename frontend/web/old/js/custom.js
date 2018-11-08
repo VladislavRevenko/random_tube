@@ -15,14 +15,14 @@ $(document).ready(function () {
     });
 
     $('#submitForm').on('click', function () {
-        ajaxFormSend('form', '/index.php?r=site%2Fadd-send');
+        ajaxFormSend('form', '/site/add-send');
         return false;
     });
 
     $('.buttonIndex').on('click', function () {
         var idButton = $(this).attr('id');
         var srcVideo = $('iframe').attr('src');
-        ajaxIndex(idButton, srcVideo, '/index.php?r=site%2Fbutton-video');
+        ajaxIndex(idButton, srcVideo, '/site/button-video');
         return false;
     });
 });
