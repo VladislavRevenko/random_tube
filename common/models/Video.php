@@ -41,10 +41,23 @@ class Video extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'link_video' => 'Link Video',
-            'like' => 'Like',
-            'dislike' => 'Dislike',
-            'status' => 'Status',
+            'link_video' => 'Ссылка на youtube',
+            'like' => 'Лайк',
+            'dislike' => 'Дизлайк',
+            'status' => 'Статус',
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getDropDownStatus()
+    {
+        $status = [
+            'active' => 'Опубликовано',
+            'archive' => 'Не опубликовано'
+        ];
+
+        return $status;
     }
 }

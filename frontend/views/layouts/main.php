@@ -56,7 +56,7 @@ AppAsset::register($this);
 
     <div class="container">
         <a href="<?= Yii::$app->homeUrl ?>" class="pull-left"><h4>RandomTube</h4></a>
-        <a href="/index.php?r=site%2Fadd" class="btn pull-right"><h4>Добавить видео</h4></a>
+        <a href="/site/add" class="btn pull-right"><h4>Добавить видео</h4></a>
     </div>
 
     <div class="container">

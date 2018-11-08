@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\Video;
+
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Video */
@@ -14,14 +16,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'link_video')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'like')->textInput() ?>
-
-    <?= $form->field($model, 'dislike')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'status')->dropDownList(Video::getDropDownStatus()) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -1,8 +1,8 @@
+# use mod_rewrite for pretty URL support
 RewriteEngine on
-
-# если это папка или файл, открываем его
+# if a directory or a file exists, use the request directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# в противном случае перенаправляем на index.php
-RewriteRule ^.*$ web/index.php
+# otherwise forward the request to index.php
+RewriteBase /admin
+RewriteRule . index.php
