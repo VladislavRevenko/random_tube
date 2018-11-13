@@ -27,14 +27,14 @@ AppAsset::register($this);
     <script>
         function deleteRecords() {
             var deletions = [];
-            $('tr td input:checkbox:checked').each(function (index, value) {
-                if ($(value).val().length > 0) {
-                    deletions.push($(value).val());
+            jQuery('tr td input:checkbox:checked').each(function (index, value) {
+                if (jQuery(value).val().length > 0) {
+                    deletions.push(jQuery(value).val());
                 }
             });
-            $.post("<?=Yii::$app->urlManager->createUrl(['video/deletions'])?>", {'deletions[]': deletions})
+            jQuery.post("<?=Yii::$app->urlManager->createUrl(['video/deletions'])?>", {'deletions[]': deletions})
                 .done(function (data) {
-                    data = $.parseJSON(data);
+                    data = jQuery.parseJSON(data);
                     if (data.success == true) {
                         location.reload();
                     } else {
@@ -46,7 +46,7 @@ AppAsset::register($this);
 
         function openRecords() {
             //Not working in Chrome
-            $('.update-records').reverse().each(function () {
+            jQuery('.update-records').reverse().each(function () {
                 setTimeout(() => {
                     window.open($(this).attr('href'), '_blank');
                 }, 500);
@@ -54,18 +54,18 @@ AppAsset::register($this);
             return false;
         }
 
+    window.onload = function() {
         jQuery.fn.reverse = [].reverse;
 
-        $(document).ready(function () {
-            $('.to-queue').on('click', function () {
-                var $form = $(this).closest('form');
-                if ($form.length > 0) {
-                    $form.find('.queue').val(1);
-                    $form.submit();
-                }
-                return false;
-            });
+        jQuery('.to-queue').on('click', function () {
+            var $form = jQuery(this).closest('form');
+            if ($form.length > 0) {
+                $form.find('.queue').val(1);
+                $form.submit();
+            }
+            return false;
         });
+    };
     </script>
 
 </head>
