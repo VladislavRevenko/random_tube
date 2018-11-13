@@ -76,7 +76,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $video_list = Video::find()->orderBy(new Expression('rand()'))->where(['status' => 'active'])->one();
+        $video_list = Video::find()->orderBy(new Expression('rand()'))->where(['idStatus' => '1'])->one();
         return $this->render('index', ['video' => $video_list]);
     }
 
@@ -88,19 +88,22 @@ class SiteController extends Controller
     public function actionAddSend()
     {
         if (Yii::$app->request->isAjax) {
-            $dataForm = Yii::$app->request->post('linkVideo');
-            foreach ($dataForm as $item) {
-                $url_host = parse_url($item);
-                if ($item !== '' && $item !== null && !empty($url_host['host'])) {
-                    if ($url_host['host'] == 'www.youtube.com') {
-                        $url_video = preg_replace('/v=/', '', $url_host['query']);
-                        $video = new Video();
+            $arrayNames = Yii::$app->request->post('name_video');
+            $arrayLinks = Yii::$app->request->post('linkVideo');
+
+            for ($count = 0; $count < count($arrayNames); $count++) {
+                $video = new Video();
+                $parseLink = parse_url($arrayLinks[$count]);
+                if ($parseLink !== '' && $parseLink !== null && !empty($parseLink['host'])) {
+                    if ($parseLink['host'] == 'www.youtube.com') {
+                        $url_video = preg_replace('/v=/', '', $arrayLinks[$count]);
                         $video->link_video = "https://www.youtube.com/embed/" . $url_video;
+                        $video->name = $arrayNames[$count];
                         $video->save();
-                    } elseif ($url_host['host'] == 'youtu.be') {
-                        $url_video = preg_replace('/https:\/\/youtu.be\//', '', $item);
-                        $video = new Video();
+                    } elseif ($parseLink['host'] == 'youtu.be') {
+                        $url_video = preg_replace('/https:\/\/youtu.be\//', '', $arrayLinks[$count]);
                         $video->link_video = "https://www.youtube.com/embed/" . $url_video;
+                        $video->name = $arrayNames[$count];
                         $video->save();
                     }
                 } else {
@@ -113,18 +116,17 @@ class SiteController extends Controller
             }
             $result = [
                 'status' => 'success',
-                'message' => 'Заявка отправлена',
-                'data' => $dataForm
+                'message' => 'Заявка отправленна',
             ];
+            return json_encode($result);
         } else {
             $result = [
                 'status' => 'error',
                 'message' => 'no is AJAX',
             ];
+            return json_encode($result);
         }
-        return json_encode($result);
     }
-
 
     public function actionButtonVideo()
     {
@@ -140,7 +142,7 @@ class SiteController extends Controller
                 $video->dislike = $video->dislike + 1;
                 $video->save();
             } elseif ($button == 'still') {
-                $newSrc = Video::find()->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['status' => 'active'])->one();
+                $newSrc = Video::find()->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['idStatus' => '1'])->one();
                 $src = $newSrc->link_video;
             }
 
@@ -149,13 +151,14 @@ class SiteController extends Controller
                 'message' => 'Успешно',
                 'newSrc' => $src
             ];
+            return json_encode($result);
         } else {
             $result = [
                 'status' => 'error',
                 'message' => 'no is AJAX',
             ];
-        };
-        return json_encode($result);
+            return json_encode($result);
+        }
     }
 
     /**

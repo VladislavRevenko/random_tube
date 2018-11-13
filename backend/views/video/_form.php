@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use common\models\Video;
+use common\models\DirectoryStatus;
 
 
 /* @var $this yii\web\View */
@@ -13,10 +13,10 @@ use common\models\Video;
 <div class="video-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'link_video')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'idStatus')->dropDownList(\yii\helpers\ArrayHelper::map(DirectoryStatus::find()->select(['id', 'status'])->asArray()->all(), 'id', 'status')); ?>
 
-    <?= $form->field($model, 'status')->dropDownList(Video::getDropDownStatus()) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

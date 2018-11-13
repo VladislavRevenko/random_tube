@@ -5,11 +5,8 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
-use common\widgets\Alert;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -56,7 +53,7 @@ AppAsset::register($this);
 
     <div class="container">
         <a href="<?= Yii::$app->homeUrl ?>" class="pull-left"><h4>RandomTube</h4></a>
-        <a href="/site/add" class="btn pull-right"><h4>Добавить видео</h4></a>
+        <a href="<?= Url::toRoute('/site/add'); ?>" class="btn pull-right"><h4>Добавить видео</h4></a>
     </div>
 
     <div class="container">
@@ -65,7 +62,6 @@ AppAsset::register($this);
 </div>
 
 <footer class="footer">
-
     <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
             integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="

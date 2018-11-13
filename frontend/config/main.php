@@ -41,7 +41,9 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'suffix' => '/',
             'rules' => [
+                'add' => 'site/add',
             ],
         ],
     ],

@@ -23,6 +23,51 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+
+    <script>
+        function deleteRecords() {
+            var deletions = [];
+            $('tr td input:checkbox:checked').each(function (index, value) {
+                if ($(value).val().length > 0) {
+                    deletions.push($(value).val());
+                }
+            });
+            $.post("<?=Yii::$app->urlManager->createUrl(['video/deletions'])?>", {'deletions[]': deletions})
+                .done(function (data) {
+                    data = $.parseJSON(data);
+                    if (data.success == true) {
+                        location.reload();
+                    } else {
+                        alert('При удалении произошла ошибка');
+                    }
+                });
+            return false;
+        }
+
+        function openRecords() {
+            //Not working in Chrome
+            $('.update-records').reverse().each(function () {
+                setTimeout(() => {
+                    window.open($(this).attr('href'), '_blank');
+                }, 500);
+            });
+            return false;
+        }
+
+        jQuery.fn.reverse = [].reverse;
+
+        $(document).ready(function () {
+            $('.to-queue').on('click', function () {
+                var $form = $(this).closest('form');
+                if ($form.length > 0) {
+                    $form.find('.queue').val(1);
+                    $form.submit();
+                }
+                return false;
+            });
+        });
+    </script>
+
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -39,6 +84,9 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Главная', 'url' => ['/site/index'],],
         ['label' => 'Видео', 'url' => ['/video/index'],],
+        ['label' => 'Справочники', 'items' => [
+            ['label' => 'Статусы', 'url' => ['/directory-status/index']]
+        ]]
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Вход', 'url' => ['/site/login']];

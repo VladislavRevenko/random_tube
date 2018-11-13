@@ -20,14 +20,30 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?= GridView::widget([
+
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'id',
+//['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\CheckboxColumn',
+            ],
+            'name',
             'link_video',
-            'status',
+            [
+                'attribute' => 'idStatus',
+                'value' => function ($dataProvider) {
+                    if (is_object($dataProvider->directoryStatus)) {
+                        return $dataProvider->directoryStatus->status;
+                    }
+                    return 'Не задано';
+                }
+            ],
+            'like',
+            'dislike',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    <button class="btn btn-danger" onclick="deleteRecords()">Удалить</button>
+    <button class="btn btn-success" onclick="openRecords()">Открыть записи</button>
 </div>

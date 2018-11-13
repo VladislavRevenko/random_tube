@@ -3,26 +3,27 @@ $(document).ready(function () {
     deleteLinkVideo();
     $('#addInputLink').on('click', function () {
         if (count < 10) {
-            $(this).parent().parent().before('<div class="tile is-parent deleteBlock has-addons field is-6 center-block">' +
+            $(this).parent().parent().before('<div class="tile is-ancestor"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
+                '<input type="text" name="name_video[' + count + ']" class="input is-medium name_video" placeholder="Название видео">' +
                 '<input type="text" name="linkVideo[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
                 '<a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>' +
-                '</div>');
+                '</div></div>');
             deleteLinkVideo();
             count++;
         } else {
-            $('#result').html('<h4>Вы создали максимальное колличество ссылок</h4>');
+            $('#result').html('<h4>Вы создали максимальное количество ссылок</h4>');
         }
     });
 
     $('#submitForm').on('click', function () {
-        ajaxFormSend('form', '/site/add-send');
+        ajaxFormSend('ajaxForm', '/site/add-send/');
         return false;
     });
 
     $('.buttonIndex').on('click', function () {
         var idButton = $(this).attr('id');
         var srcVideo = $('iframe').attr('src');
-        ajaxIndex(idButton, srcVideo, '/site/button-video');
+        ajaxIndex(idButton, srcVideo, '/site/button-video/');
         return false;
     });
 });
@@ -34,14 +35,24 @@ function deleteLinkVideo() {
 }
 
 function ajaxFormSend(ajaxForm, url) {
-    var dataForm = $(ajaxForm).serialize();
+    var dataForm = $('#' + ajaxForm).serialize();
     $.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
         data: dataForm,
         success: function (response) {
-            $('#result').html(response.message);
+            if (response.message == 'Заявка отправленна') {
+                $('#result').html(response.message);
+                setTimeout(function () {
+                    location.reload();
+                }, 6000);
+            } else {
+                $('#result').html(response.message);
+                setTimeout(function () {
+                    $('#result').html('');
+                }, 3000);
+            }
         },
         error: function (response) {
             $('#result').html(response.message);

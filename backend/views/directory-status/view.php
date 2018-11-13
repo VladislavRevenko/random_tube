@@ -4,18 +4,18 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Video */
+/* @var $model common\models\DirectoryStatus */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Видео', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Справочник статусов', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="video-view">
+<div class="directory-status-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Обновить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -28,16 +28,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'name',
-            'link_video',
-            'like',
-            'dislike',
-            [
-                'attribute' => 'idStatus',
-                'value' => function ($dataProvider) {
-                    return $dataProvider->directoryStatus->status;
-                }
-            ],
+            'id',
+            'status',
         ],
     ]) ?>
 

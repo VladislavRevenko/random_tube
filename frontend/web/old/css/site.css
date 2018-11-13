@@ -119,4 +119,10 @@ a.desc:after {
     outline: none;
 }
 
+.link_video, .deleteLink {
+    margin-left: 50px;
+}
 
+#addInputLink{
+    width: 250px;
+}

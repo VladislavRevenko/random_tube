@@ -5,12 +5,12 @@ namespace common\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Video;
+use common\models\DirectoryStatus;
 
 /**
- * VideoSearch represents the model behind the search form of `common\models\Video`.
+ * DirectoryStatusSearch represents the model behind the search form of `common\models\directory-status`.
  */
-class VideoSearch extends Video
+class DirectoryStatusSearch extends DirectoryStatus
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class VideoSearch extends Video
     public function rules()
     {
         return [
-            [['id', 'like', 'dislike'], 'integer'],
-            [['link_video', 'idStatus', 'name'], 'safe'],
+            [['id'], 'integer'],
+            [['status'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class VideoSearch extends Video
      */
     public function search($params)
     {
-        $query = Video::find();
+        $query = DirectoryStatus::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +60,9 @@ class VideoSearch extends Video
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'name' => $this->name,
-            'like' => $this->like,
-            'dislike' => $this->dislike,
         ]);
 
-        $query->andFilterWhere(['like', 'link_video', $this->link_video])
-            ->andFilterWhere(['like', 'idStatus', $this->idStatus]);
+        $query->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;
     }
