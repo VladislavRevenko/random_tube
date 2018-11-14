@@ -35,6 +35,7 @@ phpunit.phar
 /.vagrant
 
 .htaccess
+
 /backend/web/upload/*
 /backend/web/images/*
 /backend/web/logo/*
