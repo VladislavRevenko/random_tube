@@ -15,7 +15,7 @@ use common\models\DirectoryStatus;
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'link_video')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'idStatus')->dropDownList(\yii\helpers\ArrayHelper::map(DirectoryStatus::find()->select(['id', 'status'])->asArray()->all(), 'id', 'status')); ?>
+    <?= $form->field($model, 'status_id')->dropDownList(\yii\helpers\ArrayHelper::map(DirectoryStatus::find()->select(['id', 'status'])->asArray()->all(), 'id', 'status')); ?>
 
 
     <div class="form-group">

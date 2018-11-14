@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'dislike') ?>
 
-    <?= $form->field($model, 'idStatus') ?>
+    <?= $form->field($model, 'status_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

@@ -25,47 +25,65 @@ AppAsset::register($this);
     <?php $this->head() ?>
 
     <script>
-        function deleteRecords() {
-            var deletions = [];
-            $('tr td input:checkbox:checked').each(function (index, value) {
-                if ($(value).val().length > 0) {
-                    deletions.push($(value).val());
-                }
-            });
-            $.post("<?=Yii::$app->urlManager->createUrl(['video/deletions'])?>", {'deletions[]': deletions})
-                .done(function (data) {
-                    data = $.parseJSON(data);
-                    if (data.success == true) {
-                        location.reload();
-                    } else {
-                        alert('При удалении произошла ошибка');
+        window.onload = function() {
+
+            jQuery('.delete-records').on('click', function() {
+                var deletions = [];
+                $('tr td input:checkbox:checked').each(function (index, value) {
+                    if ($(value).val().length > 0) {
+                        deletions.push($(value).val());
                     }
                 });
-            return false;
-        }
-
-        function openRecords() {
-            //Not working in Chrome
-            $('.update-records').reverse().each(function () {
-                setTimeout(() => {
-                    window.open($(this).attr('href'), '_blank');
-                }, 500);
-            });
-            return false;
-        }
-
-        jQuery.fn.reverse = [].reverse;
-
-        $(document).ready(function () {
-            $('.to-queue').on('click', function () {
-                var $form = $(this).closest('form');
-                if ($form.length > 0) {
-                    $form.find('.queue').val(1);
-                    $form.submit();
-                }
+                $.post("<?=Yii::$app->urlManager->createUrl(['video/deletions'])?>", {'deletions[]': deletions})
+                    .done(function (data) {
+                        data = $.parseJSON(data);
+                        if (data.success == true) {
+                            location.reload();
+                        } else {
+                            alert('При удалении произошла ошибка');
+                        }
+                    });
                 return false;
             });
-        });
+
+            jQuery('.activate-records').on('click', function() {
+                var activeItems = [];
+                $('tr td input:checkbox:checked').each(function (index, value) {
+                    if ($(value).val().length > 0) {
+                        activeItems.push($(value).val());
+                    }
+                });
+                if (activeItems.length > 0) {
+                    $.ajax({
+                        url: '<?=Yii::$app->urlManager->createUrl(["video/activate"])?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            'activateItems[]': activeItems
+                        },
+                        success: function (response) {
+                            // response = $.parseJSON(response);
+                            if (response.success == true) {
+                                location.reload();
+                                // console.log('success');
+                                // console.log(response);
+                            } else {
+                                alert('При активации произошла ошибка');
+                                console.log(response);
+                            }
+                        },
+                        error: function (response) {
+                            console.log('error');
+                            console.log(response);
+                        }
+                    });
+
+                } else {
+                    alert('Вы не выбрали записи');
+                }
+                console.log(activeItems);
+            });
+        }
     </script>
 
 </head>

@@ -9,7 +9,7 @@ namespace common\models;
  * @property string $link_video
  * @property int $like
  * @property int $dislike
- * @property string $idStatus
+ * @property string $status_id
  * @property string $name
  */
 class Video extends \yii\db\ActiveRecord
@@ -29,8 +29,9 @@ class Video extends \yii\db\ActiveRecord
     {
         return [
             [['like', 'dislike'], 'integer'],
-            [['link_video', 'idStatus', 'name'], 'string', 'max' => 255],
+            [['link_video', 'status_id', 'name'], 'string', 'max' => 255],
             [['link_video'], 'required'],
+            [['link_video'], 'unique'],
         ];
     }
 
@@ -45,37 +46,47 @@ class Video extends \yii\db\ActiveRecord
             'link_video' => 'Ссылка на youtube',
             'like' => 'Лайк',
             'dislike' => 'Дизлайк',
-            'idStatus' => 'Статус',
+            'status_id' => 'Статус',
         ];
     }
 
-
-    public function afterSave($insert, $changedAttributes)
+    public function beforeSave($insert)
     {
-        if ($insert) {
-//            var_dump($changedAttributes); //старые атрибутты, при обновлении
-//            var_dump($this->oldAttributes); // тоже новые атрибуты
+        if (parent::beforeSave($insert)) {
+
             $dataCreateVideo = $this->attributes; //атрибуты нового видео
             $urlVideo = $dataCreateVideo['link_video'];
 
             $url_host = parse_url($urlVideo);
+            //Если у нас в записи содержится только id  видео то пропускаем остальное
+            if (empty($url_host['host'])) {
+                return true;
+            }
 
             if (!empty($url_host['host'])) {
                 if ($url_host['host'] == 'www.youtube.com') {
-                    $url_video = preg_replace('/v=/', '', $url_host['query']);
-                    $this->link_video = "https://www.youtube.com/embed/" . $url_video;
+                    if (!empty($url_host['query'])) {
+                        $url_video = preg_replace('/v=/', '', $url_host['query']);
+                        $this->link_video = $url_video;
+                    }
                 } elseif ($url_host['host'] == 'youtu.be') {
-                    $url_video = preg_replace('/https:\/\/youtu.be\/\//', '', $url_host['path']);
-                    $this->link_video = "https://www.youtube.com/embed" . $url_video;
+                    if (!empty($url_host['path'])) {
+                        $url_video = preg_replace('/https:\/\/youtu.be\/\//', '', $url_host['path']);
+                        $this->link_video = $url_video;
+                    }
                 }
-                $this->save();
-                parent::afterSave($insert, $changedAttributes);
+                // Чекаем на уникальность
+                if (Video::find()->where(['link_video'=>$url_video])->exists()) {
+                    return false;
+                }
             }
+            return true;
         }
+        return false;
     }
 
     public function getDirectoryStatus()
     {
-        return $this->hasOne(DirectoryStatus::className(), ['id' => 'idStatus']);
+        return $this->hasOne(DirectoryStatus::className(), ['id' => 'status_id']);
     }
 }

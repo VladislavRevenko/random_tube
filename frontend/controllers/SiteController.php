@@ -76,7 +76,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $video_list = Video::find()->orderBy(new Expression('rand()'))->where(['idStatus' => '1'])->one();
+        $video_list = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->one();
         return $this->render('index', ['video' => $video_list]);
     }
 
@@ -89,34 +89,53 @@ class SiteController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             $arrayNames = Yii::$app->request->post('name_video');
-            $arrayLinks = Yii::$app->request->post('linkVideo');
+            $arrayLinks = Yii::$app->request->post('link_video');
+
+            if (count($arrayNames)!=count($arrayLinks)) {
+                $result = [
+                    'status' => 'error',
+                    'message' => 'Не соответствующий формат ссылок '.count($arrayNames).' '.count($arrayLinks),
+                ];
+                return json_encode($result);
+            }
+            $errors = array();
+
+            $allowedHosts = array(
+                "youtube.com",
+                "www.youtube.com",
+                "youtu.be",
+            );
 
             for ($count = 0; $count < count($arrayNames); $count++) {
                 $video = new Video();
                 $parseLink = parse_url($arrayLinks[$count]);
                 if ($parseLink !== '' && $parseLink !== null && !empty($parseLink['host'])) {
-                    if ($parseLink['host'] == 'www.youtube.com') {
-                        $url_video = preg_replace('/v=/', '', $arrayLinks[$count]);
-                        $video->link_video = "https://www.youtube.com/embed/" . $url_video;
-                        $video->name = $arrayNames[$count];
-                        $video->save();
-                    } elseif ($parseLink['host'] == 'youtu.be') {
-                        $url_video = preg_replace('/https:\/\/youtu.be\//', '', $arrayLinks[$count]);
-                        $video->link_video = "https://www.youtube.com/embed/" . $url_video;
-                        $video->name = $arrayNames[$count];
-                        $video->save();
+
+                    if (array_search($parseLink['host'], $allowedHosts)==false) {
+                        $result = [
+                            'status' => 'error',
+                            'message' => 'Не соответствующий формат ссылок2',
+                        ];
+                        return json_encode($result);
+                    }
+                    $video->link_video = $arrayLinks[$count];
+                    $video->name = $arrayNames[$count];
+                    if (!$video->save()) {
+                        $errors[] = $video->link_video;
                     }
                 } else {
                     $result = [
                         'status' => 'error',
-                        'message' => 'Не соответствующий формат ссылок',
+                        'message' => 'Не соответствующий формат ссылок3',
                     ];
                     return json_encode($result);
                 }
             }
+
             $result = [
                 'status' => 'success',
-                'message' => 'Заявка отправленна',
+                'message' => 'Заявка отправлена',
+                'errors' => $errors
             ];
             return json_encode($result);
         } else {
@@ -142,8 +161,10 @@ class SiteController extends Controller
                 $video->dislike = $video->dislike + 1;
                 $video->save();
             } elseif ($button == 'still') {
-                $newSrc = Video::find()->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['idStatus' => '1'])->one();
-                $src = $newSrc->link_video;
+                $newSrc = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->one();
+                if (is_object($newSrc)) {
+                    $src = $newSrc->link_video;
+                }
             }
 
             $result = [

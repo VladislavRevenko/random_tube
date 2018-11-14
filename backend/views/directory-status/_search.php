@@ -14,10 +14,9 @@ use yii\widgets\ActiveForm;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-
     <?= $form->field($model, 'id') ?>
-
     <?= $form->field($model, 'status') ?>
+    <?= $form->field($model, 'value') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Поиск', ['class' => 'btn btn-primary']) ?>

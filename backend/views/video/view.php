@@ -32,12 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'link_video',
             'like',
             'dislike',
+            /*
             [
-                'attribute' => 'idStatus',
+                'attribute' => 'status_id',
                 'value' => function ($dataProvider) {
-                    return $dataProvider->directoryStatus->status;
+                    if (is_object($dataProvider)) {
+                        return $dataProvider->directoryStatus['status'];
+                    } else {
+                        echo 'Не задано';
+                    }
                 }
             ],
+            */
+            'status_id'
         ],
     ]) ?>
 

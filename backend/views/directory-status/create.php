@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\DirectoryStatus */
 
-$this->title = 'Справочник статусов';
-$this->params['breadcrumbs'][] = ['label' => 'Directory Statuses', 'url' => ['index']];
+$this->title = 'Новый статус';
+$this->params['breadcrumbs'][] = ['label' => 'Справочник статусов', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="directory-status-create">

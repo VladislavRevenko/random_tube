@@ -33,15 +33,15 @@ class m181030_104229_video extends Migration
             'id' => $this->primaryKey(),
             'link_video' => $this->string(),
             'like' => $this->integer(),
-            'dislike' => $this->integer()
+            'dislike' => $this->integer(),
+            'status_id' => $this->integer(),
+            'name' => $this->string(),
         ]);
     }
 
     public function down()
     {
-        echo "m181030_104229_video cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('video');
     }
 
 }

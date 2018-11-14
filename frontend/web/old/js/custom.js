@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    var count = 1;
+    var count = $('.add-video-block').length;
     deleteLinkVideo();
     $('#addInputLink').on('click', function () {
         if (count < 10) {
-            $(this).parent().parent().before('<div class="tile is-ancestor"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
+            $(this).parent().parent().before('<div class="tile is-ancestor add-video-block"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
                 '<input type="text" name="name_video[' + count + ']" class="input is-medium name_video" placeholder="Название видео">' +
-                '<input type="text" name="linkVideo[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
+                '<input type="text" name="link_video[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
                 '<a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>' +
                 '</div></div>');
             deleteLinkVideo();
@@ -22,8 +22,10 @@ $(document).ready(function () {
 
     $('.buttonIndex').on('click', function () {
         var idButton = $(this).attr('id');
-        var srcVideo = $('iframe').attr('src');
-        ajaxIndex(idButton, srcVideo, '/site/button-video/');
+        var srcVideo = $('iframe').attr('data-video-id');
+        if (srcVideo.length>0) {
+            ajaxIndex(idButton, srcVideo, '/site/button-video/');
+        }
         return false;
     });
 });
@@ -70,7 +72,8 @@ function ajaxIndex(button, srcVideo, url) {
             'srcVideo': srcVideo,
         },
         success: function (response) {
-            $('iframe').attr('src', response.newSrc);
+            $('iframe').attr('src', 'https://www.youtube.com/embed/' + response.newSrc);
+            $('iframe').attr('data-video-id', response.newSrc);
         },
         error: function (response) {
         }

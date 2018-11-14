@@ -8,6 +8,8 @@ use common\models\VideoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\DirectoryStatus;
+
 
 /**
  * VideoController implements the CRUD actions for Video model.
@@ -148,5 +150,38 @@ class VideoController extends Controller
             return json_encode(array('success' => true));
         }
         return json_encode(array('success' => false, 'errors' => $errors));
+    }
+
+    public function actionActivate()
+    {
+        $activateItems = Yii::$app->request->post('activateItems');
+        $errors = [];
+        $result = [];
+        $status_id = DirectoryStatus::find()->asArray()->where(['value' => 1])->one();
+        if (!empty($activateItems) && !empty($status_id['id'])) {
+            $status_id = $status_id['id'];
+            if (is_array($activateItems)) {
+                $activateItems = array_unique($activateItems);
+                foreach ($activateItems as $item_id) {
+                    $item = $this->findModel($item_id);
+                    if (is_object($item)) {
+                        $item->status_id = $status_id;
+                        if (!$item->save()) {
+                            $errors[] = $item->id;
+                        }
+                    } else {
+                        $errors[] = $item_id;
+                    }
+                }
+                $result = [
+                    'success' => true,
+                    'message' => 'Активировано',
+                    'test' => $status_id,
+                    'errors' => $errors,
+                ];
+            }
+        }
+
+        return json_encode($result);
     }
 }

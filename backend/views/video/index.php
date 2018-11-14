@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'link_video',
             [
-                'attribute' => 'idStatus',
+                'attribute' => 'status_id',
                 'value' => function ($dataProvider) {
                     if (is_object($dataProvider->directoryStatus)) {
                         return $dataProvider->directoryStatus->status;
@@ -44,6 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-    <button class="btn btn-danger" onclick="deleteRecords()">Удалить</button>
-    <button class="btn btn-success" onclick="openRecords()">Открыть записи</button>
+    <button class="btn btn-danger delete-records">Удалить</button>
+    <button class="btn btn-success activate-records">Активировать записи</button>
 </div>

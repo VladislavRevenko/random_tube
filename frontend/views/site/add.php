@@ -1,8 +1,8 @@
 <form method="POST" id="ajaxForm">
-    <div class="tile is-ancestor">
+    <div class="tile is-ancestor add-video-block">
         <div class="tile is-parent deleteBlock has-addons is-8 center-block">
-            <input type="text" name="name_video[0]" class="input is-medium name_video is-3" placeholder="Название видео">
-            <input type="text" name="linkVideo[0]" class="input is-medium link_video is-3" placeholder="Youtube url">
+            <input type="text" name="name_video[]" class="input is-medium name_video is-3" placeholder="Название видео">
+            <input type="text" name="link_video[]" class="input is-medium link_video is-3" placeholder="Youtube url">
             <a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>
         </div>
     </div>

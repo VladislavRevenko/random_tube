@@ -17,7 +17,7 @@ class DirectoryStatus extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'directory_status';
+        return 'directory_statuses';
     }
 
     /**
@@ -27,6 +27,7 @@ class DirectoryStatus extends \yii\db\ActiveRecord
     {
         return [
             [['status'], 'string', 'max' => 255],
+            [['value'], 'integer'],
         ];
     }
 
@@ -38,12 +39,8 @@ class DirectoryStatus extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'status' => 'Статус',
+            'value' => 'Значение',
         ];
-    }
-
-    public function getVideo()
-    {
-        return $this->hasMany(Video::className(), ['id' => 'idStatus']);
     }
 
 }

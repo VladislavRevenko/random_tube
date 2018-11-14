@@ -7,36 +7,17 @@ use yii\db\Migration;
  */
 class m181112_072130_statuses extends Migration
 {
-    /**
-     * {@inheritdoc}
-     */
-    /*public function safeUp()
-    {
-
-    }*/
-
-    /**
-     * {@inheritdoc}
-     */
-    /*public function safeDown()
-    {
-        echo "m181112_072130_statuses cannot be reverted.\n";
-
-        return false;
-    }*/
-
     public function up()
     {
-        $this->createTable('directory_status', [
+        $this->createTable('directory_statuses', [
             'id' => $this->primaryKey(),
             'status' => $this->string(),
+            'value' => $this->integer()
         ]);
     }
 
     public function down()
     {
-        echo "m181112_070428_statuses cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('directory_statuses');
     }
 }
