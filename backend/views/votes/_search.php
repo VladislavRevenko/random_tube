@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\VideoSearch */
+/* @var $model common\models\VotesSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="video-search">
+<div class="votes-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,9 +17,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'link_video') ?>
+    <?= $form->field($model, 'video_id') ?>
 
-    <?= $form->field($model, 'status_id') ?>
+    <?= $form->field($model, 'ip') ?>
+
+    <?= $form->field($model, 'useragent') ?>
+
+    <?= $form->field($model, 'vote') ?>
+
+    <?php // echo $form->field($model, 'created') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

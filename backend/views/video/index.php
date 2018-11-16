@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     return 'Не задано';
                 }
             ],
-            'like',
-            'dislike',
+            'rating',
+            'views',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

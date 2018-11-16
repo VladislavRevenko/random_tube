@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Video */
+/* @var $model common\models\Votes */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Видео', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Голосование', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="video-view">
+<div class="votes-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -28,11 +28,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'name',
-            'link_video',
-            'status_id',
-            'rating',
-            'views',
+            'id',
+            'video_id',
+            'ip',
+            'useragent',
+            'vote',
+            'created',
         ],
     ]) ?>
 

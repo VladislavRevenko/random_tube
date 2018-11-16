@@ -5,12 +5,12 @@ namespace common\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Video;
+use common\models\Votes;
 
 /**
- * VideoSearch represents the model behind the search form of `common\models\Video`.
+ * VotesSearch represents the model behind the search form of `common\models\Votes`.
  */
-class VideoSearch extends Video
+class VotesSearch extends Votes
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class VideoSearch extends Video
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['link_video', 'status_id', 'name'], 'safe'],
+            [['id', 'video_id', 'vote'], 'integer'],
+            [['ip', 'useragent', 'created'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class VideoSearch extends Video
      */
     public function search($params)
     {
-        $query = Video::find();
+        $query = Votes::find();
 
         // add conditions that should always apply here
 
@@ -60,12 +60,13 @@ class VideoSearch extends Video
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'name' => $this->name,
-
+            'video_id' => $this->video_id,
+            'vote' => $this->vote,
+            'created' => $this->created,
         ]);
 
-        $query->andFilterWhere(['name', 'link_video', $this->link_video])
-            ->andFilterWhere(['name', 'status_id', $this->status_id]);
+        $query->andFilterWhere(['like', 'ip', $this->ip])
+            ->andFilterWhere(['like', 'useragent', $this->useragent]);
 
         return $dataProvider;
     }

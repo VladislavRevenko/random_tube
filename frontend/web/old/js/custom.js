@@ -23,8 +23,16 @@ $(document).ready(function () {
     $('.buttonIndex').on('click', function () {
         var idButton = $(this).attr('id');
         var srcVideo = $('iframe').attr('data-video-id');
-        if (srcVideo.length>0) {
-            ajaxIndex(idButton, srcVideo, '/site/button-video/');
+
+        if (idButton == 'get_video') {
+            if (srcVideo.length > 0) {
+                ajaxGetVideo(srcVideo, '/site/get-video/');
+            }
+        }
+        else if ((idButton == 'like') || (idButton == 'dislike')) {
+            ajaxRating(idButton, srcVideo, '/site/ratings/');
+        } else {
+            alert('Что то пошло не так. Попробуйте позже');
         }
         return false;
     });
@@ -62,13 +70,12 @@ function ajaxFormSend(ajaxForm, url) {
     });
 }
 
-function ajaxIndex(button, srcVideo, url) {
+function ajaxGetVideo(srcVideo, url) {
     jQuery.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
         data: {
-            'idButton': button,
             'srcVideo': srcVideo,
         },
         success: function (response) {
@@ -78,4 +85,27 @@ function ajaxIndex(button, srcVideo, url) {
         error: function (response) {
         }
     });
+}
+
+function ajaxRating(idButton, srcVideo, url) {
+    var date = new Date();
+    var dateParse = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    jQuery.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            'button': idButton,
+            'date': dateParse,
+            'video': srcVideo,
+        },
+        success: function (response) {
+            if (response.success == false) {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+        }
+    })
+    ;
 }

@@ -25,9 +25,9 @@ AppAsset::register($this);
     <?php $this->head() ?>
 
     <script>
-        window.onload = function() {
+        window.onload = function () {
 
-            jQuery('.delete-records').on('click', function() {
+            jQuery('.delete-records').on('click', function () {
                 var deletions = [];
                 $('tr td input:checkbox:checked').each(function (index, value) {
                     if ($(value).val().length > 0) {
@@ -46,7 +46,7 @@ AppAsset::register($this);
                 return false;
             });
 
-            jQuery('.activate-records').on('click', function() {
+            jQuery('.activate-records').on('click', function () {
                 var activeItems = [];
                 $('tr td input:checkbox:checked').each(function (index, value) {
                     if ($(value).val().length > 0) {
@@ -103,7 +103,8 @@ AppAsset::register($this);
         ['label' => 'Главная', 'url' => ['/site/index'],],
         ['label' => 'Видео', 'url' => ['/video/index'],],
         ['label' => 'Справочники', 'items' => [
-            ['label' => 'Статусы', 'url' => ['/directory-status/index']]
+            ['label' => 'Статусы', 'url' => ['/directory-status/index']],
+            ['label' => 'Голосование', 'url' => ['/votes/index/']],
         ]]
     ];
     if (Yii::$app->user->isGuest) {

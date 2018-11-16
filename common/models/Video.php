@@ -7,10 +7,10 @@ namespace common\models;
  *
  * @property int $id
  * @property string $link_video
- * @property int $like
- * @property int $dislike
  * @property string $status_id
  * @property string $name
+ * @property int $rating
+ * @property int $views
  */
 class Video extends \yii\db\ActiveRecord
 {
@@ -28,8 +28,8 @@ class Video extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['like', 'dislike'], 'integer'],
-            [['link_video', 'status_id', 'name'], 'string', 'max' => 255],
+            [['rating', 'views', 'status_id'], 'integer'],
+            [['link_video', 'name'], 'string', 'max' => 255],
             [['link_video'], 'required'],
             [['link_video'], 'unique'],
         ];
@@ -44,9 +44,9 @@ class Video extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Название видео',
             'link_video' => 'Ссылка на youtube',
-            'like' => 'Лайк',
-            'dislike' => 'Дизлайк',
             'status_id' => 'Статус',
+            'rating' => 'Рейтинг',
+            'views' => 'Просмотров',
         ];
     }
 
@@ -76,7 +76,7 @@ class Video extends \yii\db\ActiveRecord
                     }
                 }
                 // Чекаем на уникальность
-                if (Video::find()->where(['link_video'=>$url_video])->exists()) {
+                if (Video::find()->where(['link_video' => $url_video])->exists()) {
                     return false;
                 }
             }
@@ -88,5 +88,10 @@ class Video extends \yii\db\ActiveRecord
     public function getDirectoryStatus()
     {
         return $this->hasOne(DirectoryStatus::className(), ['id' => 'status_id']);
+    }
+
+    public function getVotes()
+    {
+        return $this->hasOne(Votes::className(), ['id' => 'video_id']);
     }
 }

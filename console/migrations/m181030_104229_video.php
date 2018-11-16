@@ -32,10 +32,10 @@ class m181030_104229_video extends Migration
         $this->createTable('video', [
             'id' => $this->primaryKey(),
             'link_video' => $this->string(),
-            'like' => $this->integer(),
-            'dislike' => $this->integer(),
             'status_id' => $this->integer(),
             'name' => $this->string(),
+            'rating' => $this->integer()->defaultValue(0),
+            'views' => $this->integer()->defaultValue(0),
         ]);
     }
 
