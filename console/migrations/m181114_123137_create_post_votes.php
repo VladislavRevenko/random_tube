@@ -9,7 +9,7 @@ class m181114_123137_create_post_votes extends Migration
 {
     public function up()
     {
-        $this->createTable('Votes', [
+        $this->createTable('votes', [
             'id' => $this->primaryKey(),
             'video_id' => $this->integer(),
             'ip' => $this->string(),

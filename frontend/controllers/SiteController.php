@@ -78,7 +78,9 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $video_list = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->one();
-        $video_list->updateCounters(['views' => 1]);
+        if ($video_list['views'] !== null) {
+            $video_list->updateCounters(['views' => 1]);
+        }
         return $this->render('index', ['video' => $video_list]);
     }
 
@@ -185,7 +187,15 @@ class SiteController extends Controller
             if (!empty($rating)) {
                 if ($date) {
                     $arVideo = Video::find()->where(['link_video' => $srcVideo])->one();
-                    $vote = Votes::find()->where(['video_id' => $arVideo->id, 'ip' => $_SERVER['REMOTE_ADDR']])->asArray()->one();
+                    if (is_object($arVideo)) {
+                        $vote = Votes::find()->where(['video_id' => $arVideo->id, 'ip' => $_SERVER['REMOTE_ADDR']])->asArray()->one();
+                    } else {
+                        $result = [
+                            'success' => false,
+                            'message' => 'Такого видео нет.',
+                        ];
+                        return json_encode($result);
+                    }
 
                     $parseDateNow = strtotime($date);
                     $parseLastVote = strtotime($vote['created']);
