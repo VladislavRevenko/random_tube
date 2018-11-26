@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\VideoSearch */
@@ -35,6 +35,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($dataProvider) {
                     if (is_object($dataProvider->directoryStatus)) {
                         return $dataProvider->directoryStatus->status;
+                    }
+                    return 'Не задано';
+                }
+            ],
+            [
+                'attribute' => 'category_id',
+                'value' => function ($dataProvider) {
+                    if (is_object($dataProvider->categories)) {
+                        return $dataProvider->categories->name;
                     }
                     return 'Не задано';
                 }

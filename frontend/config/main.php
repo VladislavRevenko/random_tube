@@ -43,7 +43,16 @@ return [
             'showScriptName' => false,
             'suffix' => '/',
             'rules' => [
-                'add' => 'site/add',
+                [
+                    'pattern' => '/<category:c>/<cat:(music|auto|)>/',
+                    'route' => 'site/index/',
+                    'defaults' => ['category' => '', 'cat' => ''],
+                ],
+                [
+                    'pattern' => '/<category:c>/<cat:(music|auto)>/add/',
+                    'route' => 'site/add/',
+                    'defaults' => ['category' => '', 'cat' => ''],
+                ],
             ],
         ],
     ],

@@ -2,21 +2,20 @@
 
 namespace frontend\controllers;
 
+use common\models\Categories;
+use common\models\LoginForm;
 use common\models\Video;
 use common\models\Votes;
-use Yii;
-use yii\base\InvalidParamException;
-use yii\base\Security;
-use yii\db\Expression;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use common\models\LoginForm;
+use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
-use frontend\models\ContactForm;
+use Yii;
+use yii\db\Expression;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -75,16 +74,20 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($cat)
     {
-        $video_list = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->one();
+        if (!empty($cat)) {
+            $video_list = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat])->one();
+        } else {
+            $video_list = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->one();
+        }
         if ($video_list['views'] !== null) {
             $video_list->updateCounters(['views' => 1]);
         }
         return $this->render('index', ['video' => $video_list]);
     }
 
-    public function actionAdd()
+    public function actionAdd($cat)
     {
         return $this->render('add');
     }
@@ -94,6 +97,8 @@ class SiteController extends Controller
         if (Yii::$app->request->isAjax) {
             $arrayNames = Yii::$app->request->post('name_video');
             $arrayLinks = Yii::$app->request->post('link_video');
+            $categories = Yii::$app->request->referrer;
+            $categories = parse_url($categories);
 
             if (count($arrayNames) != count($arrayLinks)) {
                 $result = [
@@ -118,28 +123,35 @@ class SiteController extends Controller
                     if (array_search($parseLink['host'], $allowedHosts) == false) {
                         $result = [
                             'status' => 'error',
-                            'message' => 'Не соответствующий формат ссылок2',
+                            'message' => 'Не соответствующий формат ссылок',
                         ];
                         return json_encode($result);
                     }
                     $video->link_video = $arrayLinks[$count];
                     $video->name = $arrayNames[$count];
+                    if ($categories['path'] == '/c/music/add/') {
+                        $cat_id = Categories::find()->asArray()->select('id')->where(['code' => 'music'])->one();
+                        $video->category_id = $cat_id['id'];
+                    } elseif ($categories['path'] == '/c/auto/add/') {
+                        $cat_id = Categories::find()->asArray()->select('id')->where(['code' => 'auto'])->one();
+                        $video->category_id = $cat_id['id'];
+                    }
+                    $video->save();
                     if (!$video->save()) {
                         $errors[] = $video->link_video;
                     }
                 } else {
                     $result = [
                         'status' => 'error',
-                        'message' => 'Не соответствующий формат ссылок3',
+                        'message' => 'Не соответствующий формат ссылок',
                     ];
                     return json_encode($result);
                 }
             }
-
             $result = [
                 'status' => 'success',
                 'message' => 'Заявка отправлена',
-                'errors' => $errors
+                'errors' => $errors,
             ];
             return json_encode($result);
         } else {
@@ -155,7 +167,18 @@ class SiteController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             $src = Yii::$app->request->post('srcVideo');
-            $newSrc = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->one();
+            $referer = parse_url(Yii::$app->request->referrer);
+            if ($referer['path'] == '/c/auto/') {
+                $category = 'auto';
+                $newSrc = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))
+                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $category])->one();
+            } elseif ($referer['path'] == '/c/music/') {
+                $category = 'music';
+                $newSrc = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))
+                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $category])->one();
+            } else {
+                $newSrc = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->one();
+            }
             if (is_object($newSrc)) {
                 $src = $newSrc->link_video;
                 $newSrc->updateCounters(['views' => 1]);
@@ -164,7 +187,7 @@ class SiteController extends Controller
             $result = [
                 'status' => 'success',
                 'message' => 'Успешно',
-                'newSrc' => $src
+                'newSrc' => $src,
             ];
             return json_encode($result);
         } else {
@@ -218,7 +241,9 @@ class SiteController extends Controller
                             $rating = 1;
                         } elseif ($rating == 'dislike') {
                             $rating = -1;
-                        } else $rating = 0;
+                        } else {
+                            $rating = 0;
+                        }
 
                         $newVote->vote = $rating;
                         $newVote->created = $date;

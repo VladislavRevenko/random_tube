@@ -4,8 +4,8 @@
 
 /* @var $content string */
 
-use yii\helpers\Html;
 use frontend\assets\AppAsset;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 AppAsset::register($this);
@@ -70,7 +70,9 @@ AppAsset::register($this);
 
     <div class="container">
         <a href="<?= Yii::$app->homeUrl ?>" class="pull-left"><h4>RandomTube</h4></a>
-        <a href="<?= Url::toRoute('/site/add'); ?>" class="btn pull-right"><h4>Добавить видео</h4></a>
+        <a href="<?= Url::toRoute('/site/add/'); ?>" class="btn pull-right"><h4>Добавить видео</h4></a>
+        <?php /*        <a href="<?= Url::toRoute('/site/signup') ?>" class="btn pull-right"><h4>Регистрация</h4></a>
+*/ ?>
     </div>
 
     <div class="container">

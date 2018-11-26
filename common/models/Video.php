@@ -8,6 +8,7 @@ namespace common\models;
  * @property int $id
  * @property string $link_video
  * @property string $status_id
+ * @property string $category_id
  * @property string $name
  * @property int $rating
  * @property int $views
@@ -28,7 +29,7 @@ class Video extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['rating', 'views', 'status_id'], 'integer'],
+            [['rating', 'views', 'status_id', 'category_id'], 'integer'],
             [['link_video', 'name'], 'string', 'max' => 255],
             [['link_video'], 'required'],
             [['link_video'], 'unique'],
@@ -45,6 +46,7 @@ class Video extends \yii\db\ActiveRecord
             'name' => 'Название видео',
             'link_video' => 'Ссылка на youtube',
             'status_id' => 'Статус',
+            'category_id' => 'Категория',
             'rating' => 'Рейтинг',
             'views' => 'Просмотров',
         ];
@@ -93,5 +95,10 @@ class Video extends \yii\db\ActiveRecord
     public function getVotes()
     {
         return $this->hasOne(Votes::className(), ['id' => 'video_id']);
+    }
+
+    public function getCategories()
+    {
+        return $this->hasOne(Categories::className(), ['id' => 'category_id']);
     }
 }

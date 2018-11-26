@@ -28,8 +28,7 @@ $(document).ready(function () {
             if (srcVideo.length > 0) {
                 ajaxGetVideo(srcVideo, '/site/get-video/');
             }
-        }
-        else if ((idButton == 'like') || (idButton == 'dislike')) {
+        } else if ((idButton == 'like') || (idButton == 'dislike')) {
             ajaxRating(idButton, srcVideo, '/site/ratings/');
         } else {
             alert('Что то пошло не так. Попробуйте позже');

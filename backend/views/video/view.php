@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'link_video',
             'status_id',
+            'category_id',
             'rating',
             'views',
         ],

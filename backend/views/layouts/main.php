@@ -5,11 +5,11 @@
 /* @var $content string */
 
 use backend\assets\AppAsset;
-use yii\helpers\Html;
+use common\widgets\Alert;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use common\widgets\Alert;
 
 AppAsset::register($this);
 ?>
@@ -102,10 +102,14 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Главная', 'url' => ['/site/index'],],
         ['label' => 'Видео', 'url' => ['/video/index'],],
-        ['label' => 'Справочники', 'items' => [
-            ['label' => 'Статусы', 'url' => ['/directory-status/index']],
-            ['label' => 'Голосование', 'url' => ['/votes/index/']],
-        ]]
+        [
+            'label' => 'Справочники',
+            'items' => [
+                ['label' => 'Статусы', 'url' => ['/directory-status/index']],
+                ['label' => 'Голосование', 'url' => ['/votes/index/']],
+                ['label' => 'Категории', 'url' => ['/categories/index/']],
+            ]
+        ]
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Вход', 'url' => ['/site/login']];
@@ -118,11 +122,11 @@ AppAsset::register($this);
             )
             . Html::endForm()
             . '</li>';
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav navbar-right'],
+            'items' => $menuItems,
+        ]);
     }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
     NavBar::end();
     ?>
 
