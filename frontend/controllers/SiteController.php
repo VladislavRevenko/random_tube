@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\HttpException;
 
 /**
  * Site controller
@@ -89,6 +90,10 @@ class SiteController extends Controller
 
     public function actionAdd($cat)
     {
+        $category = Categories::find()->asArray()->select('id')->where(['code' => $cat])->one();
+        if ($category == null && $cat != '') {
+            throw new HttpException(404, 'Категории не существует');
+        }
         return $this->render('add');
     }
 
@@ -97,8 +102,7 @@ class SiteController extends Controller
         if (Yii::$app->request->isAjax) {
             $arrayNames = Yii::$app->request->post('name_video');
             $arrayLinks = Yii::$app->request->post('link_video');
-            $categories = Yii::$app->request->referrer;
-            $categories = parse_url($categories);
+            $category = Yii::$app->request->post('category');
 
             if (count($arrayNames) != count($arrayLinks)) {
                 $result = [
@@ -107,6 +111,7 @@ class SiteController extends Controller
                 ];
                 return json_encode($result);
             }
+
             $errors = array();
 
             $allowedHosts = array(
@@ -119,7 +124,6 @@ class SiteController extends Controller
                 $video = new Video();
                 $parseLink = parse_url($arrayLinks[$count]);
                 if ($parseLink !== '' && $parseLink !== null && !empty($parseLink['host'])) {
-
                     if (array_search($parseLink['host'], $allowedHosts) == false) {
                         $result = [
                             'status' => 'error',
@@ -129,17 +133,15 @@ class SiteController extends Controller
                     }
                     $video->link_video = $arrayLinks[$count];
                     $video->name = $arrayNames[$count];
-                    if ($categories['path'] == '/c/music/add/') {
-                        $cat_id = Categories::find()->asArray()->select('id')->where(['code' => 'music'])->one();
-                        $video->category_id = $cat_id['id'];
-                    } elseif ($categories['path'] == '/c/auto/add/') {
-                        $cat_id = Categories::find()->asArray()->select('id')->where(['code' => 'auto'])->one();
-                        $video->category_id = $cat_id['id'];
+                    if ($category != '') {
+                        $categoryId = Categories::find()->asArray()->where(['code' => $category])->one();
+                        $video->category_id = $categoryId['id'];
                     }
-                    $video->save();
+
                     if (!$video->save()) {
                         $errors[] = $video->link_video;
                     }
+
                 } else {
                     $result = [
                         'status' => 'error',
@@ -167,15 +169,10 @@ class SiteController extends Controller
     {
         if (Yii::$app->request->isAjax) {
             $src = Yii::$app->request->post('srcVideo');
-            $referer = parse_url(Yii::$app->request->referrer);
-            if ($referer['path'] == '/c/auto/') {
-                $category = 'auto';
+            $cat = Yii::$app->request->post('catVideo');
+            if (!empty($cat)) {
                 $newSrc = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))
-                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $category])->one();
-            } elseif ($referer['path'] == '/c/music/') {
-                $category = 'music';
-                $newSrc = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))
-                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $category])->one();
+                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat])->one();
             } else {
                 $newSrc = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->one();
             }

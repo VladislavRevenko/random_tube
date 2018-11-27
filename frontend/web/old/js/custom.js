@@ -16,17 +16,20 @@ $(document).ready(function () {
     });
 
     $('#submitForm').on('click', function () {
-        ajaxFormSend('ajaxForm', '/site/add-send/');
+        var category = $('div.category').attr('name');
+        ajaxFormSend(category, 'ajaxForm', '/site/add-send/');
         return false;
     });
 
     $('.buttonIndex').on('click', function () {
         var idButton = $(this).attr('id');
         var srcVideo = $('iframe').attr('data-video-id');
-
+        var catVideo = $('iframe').attr('data-video-cat');
         if (idButton == 'get_video') {
-            if (srcVideo.length > 0) {
-                ajaxGetVideo(srcVideo, '/site/get-video/');
+            if (srcVideo) {
+                if (srcVideo.length > 0) {
+                    ajaxGetVideo(catVideo, srcVideo, '/site/get-video/');
+                }
             }
         } else if ((idButton == 'like') || (idButton == 'dislike')) {
             ajaxRating(idButton, srcVideo, '/site/ratings/');
@@ -43,8 +46,9 @@ function deleteLinkVideo() {
     });
 }
 
-function ajaxFormSend(ajaxForm, url) {
-    var dataForm = $('#' + ajaxForm).serialize();
+function ajaxFormSend(category, ajaxForm, url) {
+    var dataForm = $('#' + ajaxForm).serializeArray();
+    dataForm.push({name: "category", value: category});
     $.ajax({
         url: url,
         type: 'POST',
@@ -52,8 +56,8 @@ function ajaxFormSend(ajaxForm, url) {
         data: dataForm,
         success: function (response) {
             if (response.message == 'Заявка отправленна') {
-                $('#result').html(response.message);
                 setTimeout(function () {
+                    $('#result').html(response.message);
                     location.reload();
                 }, 6000);
             } else {
@@ -62,20 +66,23 @@ function ajaxFormSend(ajaxForm, url) {
                     $('#result').html('');
                 }, 3000);
             }
-        },
+        }
+        ,
         error: function (response) {
             $('#result').html(response.message);
         }
-    });
+    })
+    ;
 }
 
-function ajaxGetVideo(srcVideo, url) {
+function ajaxGetVideo(catVideo, srcVideo, url) {
     jQuery.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
         data: {
             'srcVideo': srcVideo,
+            'catVideo': catVideo,
         },
         success: function (response) {
             $('iframe').attr('src', 'https://www.youtube.com/embed/' + response.newSrc);

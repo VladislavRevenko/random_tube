@@ -44,14 +44,14 @@ return [
             'suffix' => '/',
             'rules' => [
                 [
-                    'pattern' => '/<category:c>/<cat:(music|auto|)>/',
-                    'route' => 'site/index/',
-                    'defaults' => ['category' => '', 'cat' => ''],
+                    'pattern' => '/<cat:[\w-]+>/add/',
+                    'route' => 'site/add/',
+                    'defaults' => ['cat' => ''],
                 ],
                 [
-                    'pattern' => '/<category:c>/<cat:(music|auto)>/add/',
-                    'route' => 'site/add/',
-                    'defaults' => ['category' => '', 'cat' => ''],
+                    'pattern' => '/<cat:[\w-]+>/',
+                    'route' => 'site/index/',
+                    'defaults' => ['cat' => ''],
                 ],
             ],
         ],

@@ -12,11 +12,13 @@ $this->title = 'RandomTube';
                 <iframe id="ytplayer" type="text/html" width="100%" height="450px"
                         src="https://www.youtube.com/embed/<?= $video->link_video ?>"
                         data-video-id="<?= $video->link_video ?>"
-                        frameborder="0" allowfullscreen></iframe>
+                        data-video-cat="<? if ($_GET['cat']) {
+                            echo $_GET['cat'];
+                        } ?>" frameborder="0" allowfullscreen></iframe>
                 <?php
             }
         } else {
-            echo '<div class="center-block"><h3>Видео временно отсутствуют</h3></div>';
+            echo '<div class="center-block"><h3>Видео временно отсутствуют, либо категория не существует</h3></div>';
         }
         ?>
 

@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "categories".
  *
@@ -28,6 +26,7 @@ class Categories extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'code'], 'string', 'max' => 255],
+            [['code'], 'match', 'pattern' => '/^[a-z-_]+$/', 'message' => 'Символьный код может содержать только a-z']
         ];
     }
 
