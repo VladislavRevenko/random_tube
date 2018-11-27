@@ -87,6 +87,10 @@ function ajaxGetVideo(catVideo, srcVideo, url) {
         success: function (response) {
             $('iframe').attr('src', 'https://www.youtube.com/embed/' + response.newSrc);
             $('iframe').attr('data-video-id', response.newSrc);
+            $('#like').addClass('fa fa-thumbs-up');
+            $('#dislike').addClass('fa fa-thumbs-down');
+            $('#like').text('');
+            $('#dislike').text('');
         },
         error: function (response) {
         }
@@ -106,7 +110,16 @@ function ajaxRating(idButton, srcVideo, url) {
             'video': srcVideo,
         },
         success: function (response) {
-            if (response.success == false) {
+            if (response.success == true) {
+                if (idButton == 'like') {
+                    $('i.fa.fa-thumbs-up').remove();
+                    $('i.fa.fa-thumbs-down').remove();
+                    $('#like').removeClass('fa fa-thumbs-up');
+                    $('#dislike').removeClass('fa fa-thumbs-down');
+                    $('#like').text('Ваш голос учтен');
+                    $('#dislike').text('Ваш голос учтен');
+                }
+            } else if (response.success == false) {
                 alert(response.message);
             }
         },

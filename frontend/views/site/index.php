@@ -18,7 +18,7 @@ $this->title = 'RandomTube';
                 <?php
             }
         } else {
-            echo '<div class="center-block"><h3>Видео временно отсутствуют, либо категория не существует</h3></div>';
+            echo '<div class="center-block"><h3>Видео временно отсутствуют</h3></div>';
         }
         ?>
 
