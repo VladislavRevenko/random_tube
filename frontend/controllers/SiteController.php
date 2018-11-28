@@ -83,6 +83,11 @@ class SiteController extends Controller
         return $this->render('index', ['video' => $video_list]);
     }
 
+    public function actionCategories()
+    {
+        return $this->render('categories');
+    }
+
     public function actionAdd($cat)
     {
         $category = Categories::find()->asArray()->select('id')->where(['code' => $cat])->one();

@@ -123,6 +123,10 @@ a.desc:after {
     margin-left: 50px;
 }
 
-#addInputLink{
+#addInputLink {
     width: 250px;
+}
+
+.itemCategoryMenu {
+    min-width: 100px;
 }

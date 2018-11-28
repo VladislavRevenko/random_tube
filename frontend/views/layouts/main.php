@@ -68,9 +68,16 @@ AppAsset::register($this);
         NavBar::end();
         */ ?>
 
-    <div class="container">
-        <a href="<?= Yii::$app->homeUrl ?>" class="pull-left"><h4>RandomTube</h4></a>
-        <a href="<?= Url::toRoute('/site/add/'); ?>" class="btn pull-right"><h4>Добавить видео</h4></a>
+    <div class="container level">
+        <a href="<?php
+
+        if (!empty($_GET['cat'])) {
+            echo Url::toRoute('/' . $_GET['cat']);
+        } else {
+            echo Yii::$app->homeUrl;
+        } ?>" class="btn level-left"><h4>RandomTube</h4></a>
+        <a href="<?= Url::toRoute('/site/categories/'); ?>" class="btn center-block"><h4>Категории</h4></a>
+        <a href="<?= Url::toRoute('/site/add/'); ?>" class="btn level-right"><h4>Добавить видео</h4></a>
         <?php /*        <a href="<?= Url::toRoute('/site/signup') ?>" class="btn pull-right"><h4>Регистрация</h4></a>
 */ ?>
     </div>
@@ -81,9 +88,11 @@ AppAsset::register($this);
 </div>
 
 <footer class="footer">
+    <div class="container">
+        <p class="pull-left">Codabra &copy; <?= date('Y') ?></p>
+    </div>
     <script
-            src="https://code.jquery.com/jquery-2.2.4.min.js"
-            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
             crossorigin="anonymous"></script>
     <script type="text/javascript" src="/old/js/custom.js"></script>
 </footer>

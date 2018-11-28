@@ -51,6 +51,10 @@ return [
             ],
             'rules' => [
                 [
+                    'pattern' => '/categories/',
+                    'route' => 'site/categories',
+                ],
+                [
                     'pattern' => '/<cat:[\w-]+>/add/',
                     'route' => 'site/add',
                     'defaults' => ['cat' => ''],
