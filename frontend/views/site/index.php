@@ -9,12 +9,45 @@ $this->title = 'RandomTube';
         <?php
         if (is_object($video)) {
             if ($video->link_video) { ?>
-                <iframe id="ytplayer" type="text/html" width="100%" height="450px"
-                        src="https://www.youtube.com/embed/<?= $video->link_video ?>"
-                        data-video-id="<?= $video->link_video ?>"
-                        data-video-cat="<? if ($_GET['cat']) {
-                            echo $_GET['cat'];
-                        } ?>" frameborder="0" allowfullscreen></iframe>
+<div id="ytplayer"></div>
+<script>
+  // Load the IFrame Player API code asynchronously.
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // Replace the 'ytplayer' element with an <iframe> and
+  // YouTube player after the API code downloads.
+  var player;
+  function onYouTubePlayerAPIReady() {
+    player = new YT.Player('ytplayer', {
+      height: '450',
+      width: '100%',
+      videoId: '<?= $video->link_video ?>',
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+      location.href = location.pathname+'?autoplay=true';
+    }
+  }
+
+  function onPlayerReady(event) {
+    <?php 
+    if (!empty($_GET['autoplay'])) {
+        if ($_GET['autoplay']!=false) {
+            echo 'event.target.playVideo();';
+        }
+    }
+    ?>
+  }
+</script>
                 <?php
             }
         } else {
