@@ -68,15 +68,17 @@ class Video extends \yii\db\ActiveRecord
             if (!empty($url_host['host'])) {
                 if ($url_host['host'] == 'www.youtube.com') {
                     if (!empty($url_host['query'])) {
-                        $url_video = preg_replace('/v=/', '', $url_host['query']);
-                        $this->link_video = $url_video;
+                        $pattern = ['/&feature=share/', '/v=/'];
+                        $url_video = preg_replace($pattern, '', $url_host['query']);
+
                     }
                 } elseif ($url_host['host'] == 'youtu.be') {
                     if (!empty($url_host['path'])) {
                         $url_video = preg_replace('/https:\/\/youtu.be\/\//', '', $url_host['path']);
-                        $this->link_video = $url_video;
                     }
                 }
+                $this->link_video = $url_video;
+                $this->status_id = 1;
                 // Чекаем на уникальность
                 if (Video::find()->where(['link_video' => $url_video])->exists()) {
                     return false;
