@@ -12,41 +12,11 @@ $this->title = 'RandomTube';
 <div id="ytplayer"></div>
 <script>
   // Load the IFrame Player API code asynchronously.
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  var video_id = '<?= $video->link_video?>';
+  window.onload = function() {
+      createPlayer();
+  };
 
-  // Replace the 'ytplayer' element with an <iframe> and
-  // YouTube player after the API code downloads.
-  var player;
-  function onYouTubePlayerAPIReady() {
-    player = new YT.Player('ytplayer', {
-      height: '450',
-      width: '100%',
-      videoId: '<?= $video->link_video ?>',
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      }
-    });
-  }
-
-  function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.ENDED) {
-      location.href = location.pathname+'?autoplay=true';
-    }
-  }
-
-  function onPlayerReady(event) {
-    <?php 
-    if (!empty($_GET['autoplay'])) {
-        if ($_GET['autoplay']!=false) {
-            echo 'event.target.playVideo();';
-        }
-    }
-    ?>
-  }
 </script>
                 <?php
             }
