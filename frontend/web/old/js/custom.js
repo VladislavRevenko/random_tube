@@ -1,55 +1,60 @@
-$(document).ready(function () {
-    var count = $('.add-video-block').length;
-    deleteLinkVideo();
-    $('#addInputLink').on('click', function () {
-        if (count < 10) {
-            $(this).parent().parent().before('<div class="tile is-ancestor add-video-block"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
-                '<input type="text" name="name_video[' + count + ']" class="input is-medium name_video" placeholder="Название видео">' +
-                '<input type="text" name="link_video[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
-                '<a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>' +
-                '</div></div>');
-            deleteLinkVideo();
-            count++;
-        } else {
-            $('#result').html('<h4>Вы создали максимальное количество ссылок</h4>');
+var player;
+
+function createPlayer() {
+    'use strict';
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+        loadVideo();
+    }
+}
+
+// Replace the 'ytplayer' element with an <iframe> and
+// YouTube player after the API code downloads.
+function onYouTubePlayerAPIReady() {
+    'use strict';
+    player = new YT.Player('ytplayer', {
+        height: '450',
+        width: '100%',
+        videoId: window.video_id,
+        events: {
+            'onStateChange': onPlayerStateChange
         }
     });
+}
 
-    $('#submitForm').on('click', function () {
-        var category = $('div.category').attr('name');
-        ajaxFormSend(category, 'ajaxForm', '/site/add-send/');
-        return false;
-    });
-
-    $('.buttonIndex').on('click', function () {
-        var idButton = $(this).attr('id');
-        var srcVideo = $('iframe').attr('data-video-id');
-        var catVideo = $('iframe').attr('data-video-cat');
-        if (idButton == 'get_video') {
-            if (srcVideo) {
-                if (srcVideo.length > 0) {
-                    ajaxGetVideo(catVideo, srcVideo, '/site/get-video/');
-                }
-            }
-        } else if ((idButton == 'like') || (idButton == 'dislike')) {
-            ajaxRating(idButton, srcVideo, '/site/ratings/');
-        } else {
-            alert('Что то пошло не так. Попробуйте позже');
+function loadVideo() {
+    jQuery.ajax({
+        url: location.href,
+        type: 'POST',
+        data: {
+            'video_id': window.video_id,
+        },
+        success: function (response) {
+            player.loadVideoById(response);
+            window.video_id = response;
+        },
+        error: function (response) {
+            console.log(response);
         }
-        return false;
     });
-});
+}
 
 function deleteLinkVideo() {
-    $('.deleteLink').on('click', function () {
-        $(this).parent().remove();
+    jQuery('.deleteLink').on('click', function () {
+        jQuery(this).parent().remove();
     });
 }
 
 function ajaxFormSend(category, ajaxForm, url) {
-    var dataForm = $('#' + ajaxForm).serializeArray();
+    var dataForm = jQuery('#' + ajaxForm).serializeArray();
     dataForm.push({name: "category", value: category});
-    $.ajax({
+    jQuery.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
@@ -57,70 +62,42 @@ function ajaxFormSend(category, ajaxForm, url) {
         success: function (response) {
             if (response.message == 'Заявка отправленна') {
                 setTimeout(function () {
-                    $('#result').html(response.message);
+                    jQuery('#result').html(response.message);
                     location.reload();
                 }, 6000);
             } else {
-                $('#result').html(response.message);
+                jQuery('#result').html(response.message);
                 setTimeout(function () {
-                    $('#result').html('');
+                    jQuery('#result').html('');
                 }, 3000);
             }
-        }
-        ,
+        },
         error: function (response) {
-            $('#result').html(response.message);
+            jQuery('#result').html(response.message);
         }
     })
     ;
 }
 
-function ajaxGetVideo(catVideo, srcVideo, url) {
-    jQuery.ajax({
-        url: url,
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            'srcVideo': srcVideo,
-            'catVideo': catVideo,
-        },
-        success: function (response) {
-            $('iframe').attr('src', 'https://www.youtube.com/embed/' + response.newSrc);
-            $('iframe').attr('data-video-id', response.newSrc);
-            $('#like').addClass('fa fa-thumbs-up');
-            $('#like').show();
-            $('#dislike').addClass('fa fa-thumbs-down');
-            $('#dislike').show();
-            $('#like').text('');
-            $('#dislike').text('');
-        },
-        error: function (response) {
-        }
-    });
-}
-
 function ajaxRating(idButton, srcVideo, url) {
-    var date = new Date();
-    var dateParse = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     jQuery.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
         data: {
             'button': idButton,
-            'date': dateParse,
             'video': srcVideo,
         },
         success: function (response) {
             if (response.success == true) {
                 if (idButton == 'like') {
-                    $('a#dislike').hide();
-                    $('#like').removeClass('fa fa-thumbs-up');
-                    $('#like').text('Ваш голос учтен');
+                    jQuery('a#dislike').hide();
+                    jQuery('#like').removeClass('fa fa-thumbs-up');
+                    jQuery('#like').text('Ваш голос учтен');
                 } else if (idButton == 'dislike') {
-                    $('a#like').hide();
-                    $('#dislike').removeClass('fa fa-thumbs-down');
-                    $('#dislike').text('Ваш голос учтен');
+                    jQuery('a#like').hide();
+                    jQuery('#dislike').removeClass('fa fa-thumbs-down');
+                    jQuery('#dislike').text('Ваш голос учтен');
                 }
             } else if (response.success == false) {
                 alert(response.message);
@@ -131,3 +108,42 @@ function ajaxRating(idButton, srcVideo, url) {
     })
     ;
 }
+
+jQuery(document).ready(function() {
+    'use strict';
+    jQuery('#get_video').on('click', function() {
+        loadVideo();
+    });
+
+    var count = jQuery('.add-video-block').length;
+    deleteLinkVideo();
+    jQuery('#addInputLink').on('click', function () {
+        if (count < 10) {
+            jQuery(this).parent().parent().before('<div class="tile is-ancestor add-video-block"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
+                '<input type="text" name="name_video[' + count + ']" class="input is-medium name_video" placeholder="Название видео">' +
+                '<input type="text" name="link_video[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
+                '<a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>' +
+                '</div></div>');
+            deleteLinkVideo();
+            count++;
+        } else {
+            jQuery('#result').html('<h4>Вы создали максимальное количество ссылок</h4>');
+        }
+    });
+
+    jQuery('#submitForm').on('click', function () {
+        var category = jQuery('div.category').attr('name');
+        ajaxFormSend(category, 'ajaxForm', '/site/add-send/');
+        $('#ajaxForm')[0].reset();
+        return false;
+    });
+
+    jQuery('.buttonIndex').on('click', function () {
+        var idButton = jQuery(this).attr('id');
+        if ((idButton == 'like') || (idButton == 'dislike')) {
+            ajaxRating(idButton, window.video_id, '/site/ratings/');
+        }
+        return false;
+    });
+
+});

@@ -1,7 +1,4 @@
 <form method="POST" id="ajaxForm">
-    <div class="category" name="<? if ($_GET['cat']) {
-        echo $_GET['cat'];
-    } ?>"></div>
     <div class="tile is-ancestor add-video-block">
         <div class="tile is-parent deleteBlock has-addons is-8 center-block">
             <input type="text" name="name_video[]" class="input is-medium name_video is-3" placeholder="Название видео">

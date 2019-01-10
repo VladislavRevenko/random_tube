@@ -68,19 +68,32 @@ class SiteController extends Controller
 
     public function actionIndex($cat)
     {
+        $video_id = Yii::$app->request->post('video_id', false);
+
         if (!empty($cat)) {
             $searchCat = Categories::find()->where(['code' => $cat])->one();
             if ($searchCat == null) {
                 throw new HttpException(404, 'Категории не существует');
             }
-            $video_list = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat])->one();
+            $video_query = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat]);
         } else {
-            $video_list = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['category_id' => null])->one();
+            $video_query = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['category_id' => null]);
         }
-        if ($video_list['views'] !== null) {
-            $video_list->updateCounters(['views' => 1]);
+        if ($video_id!==false) {
+            $video = $video_query->andWhere(['not', ['link_video' => $video_id]])->one();
+        } else {
+            $video = $video_query->one();
         }
-        return $this->render('index', ['video' => $video_list]);
+
+        if (is_object($video)) {
+            $video->updateCounters(['views' => 1]);
+            if (Yii::$app->request->isAjax) {
+                return $video->link_video;
+            } else {
+                return $this->render('index', ['video' => $video]);
+            }
+        }
+        throw new HttpException(404, 'Нет видео');
     }
 
     public function actionCategories()
@@ -165,109 +178,68 @@ class SiteController extends Controller
         }
     }
 
-    public function actionGetVideo()
-    {
-        if (Yii::$app->request->isAjax) {
-            $src = Yii::$app->request->post('srcVideo');
-            $cat = Yii::$app->request->post('catVideo');
-            if (!empty($cat)) {
-                $newSrc = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))
-                    ->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat])->one();
-            } else {
-                $newSrc = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['not', ['link_video' => $src]])->andWhere(['directory_statuses.value' => '1'])->andWhere(['category_id' => null])->one();
-            }
-            if (is_object($newSrc)) {
-                $src = $newSrc->link_video;
-                $newSrc->updateCounters(['views' => 1]);
-            }
-
-            $result = [
-                'status' => 'success',
-                'message' => 'Успешно',
-                'newSrc' => $src,
-            ];
-            return json_encode($result);
-        } else {
-            $result = [
-                'status' => 'error',
-                'message' => 'no is AJAX',
-            ];
-            return json_encode($result);
-        }
-    }
-
     public function actionRatings()
     {
         if (Yii::$app->request->isAjax) {
             $rating = Yii::$app->request->post('button');
-            $date = Yii::$app->request->post('date');
             $srcVideo = Yii::$app->request->post('video');
 
             if (!empty($rating)) {
-                if ($date) {
-                    $arVideo = Video::find()->where(['link_video' => $srcVideo])->one();
-                    if (is_object($arVideo)) {
-                        $vote = Votes::find()->where(['video_id' => $arVideo->id, 'ip' => $_SERVER['REMOTE_ADDR']])->asArray()->one();
-                    } else {
-                        $result = [
-                            'success' => false,
-                            'message' => 'Такого видео нет.',
-                        ];
-                        return json_encode($result);
-                    }
-
-                    $parseDateNow = strtotime($date);
-                    $parseLastVote = strtotime($vote['created']);
-                    $validVote = 0;
-
-                    if ($vote['created'] == false) {
-                        $parseLastVote = false;
-                    } else {
-                        $validVote = (($parseDateNow - $parseLastVote) / 60 / 60);
-                    }
-
-                    if ($validVote > 24 || $parseLastVote == false) {
-                        $newVote = new Votes();
-
-                        $newVote->video_id = $arVideo->id;
-                        $newVote->ip = $_SERVER['REMOTE_ADDR'];
-                        $newVote->useragent = $_SERVER['HTTP_USER_AGENT'];
-
-                        if ($rating == 'like') {
-                            $rating = 1;
-                        } elseif ($rating == 'dislike') {
-                            $rating = -1;
-                        } else {
-                            $rating = 0;
-                        }
-
-                        $newVote->vote = $rating;
-                        $newVote->created = $date;
-                        $resultVote = $newVote->save();
-                        $newVote->save();
-
-                        if ($resultVote) {
-                            $result = [
-                                'success' => true,
-                                'message' => 'Ваш голос учтен',
-                            ];
-                        } else {
-                            $result = [
-                                'success' => false,
-                                'message' => 'Что то пошло не так',
-                            ];
-                        }
-                    } else {
-                        $result = [
-                            'success' => false,
-                            'message' => 'Голосовать можно раз в сутки',
-                        ];
-                    }
-
+                $arVideo = Video::find()->where(['link_video' => $srcVideo])->one();
+                if (is_object($arVideo)) {
+                    $vote = Votes::find()->where(['video_id' => $arVideo->id, 'ip' => Yii::$app->request->userIP])->orderBy(['created' => SORT_DESC])->asArray()->one();
                 } else {
                     $result = [
                         'success' => false,
-                        'message' => 'Время не известно',
+                        'message' => 'Такого видео нет.',
+                    ];
+                    return json_encode($result);
+                }
+
+                $parseDateNow = time();
+                $parseLastVote = strtotime($vote['created']);
+                $validVote = 0;
+
+                if ($vote['created'] == false) {
+                    $parseLastVote = false;
+                } else {
+                    $validVote = (($parseDateNow - $parseLastVote) / 60 / 60);
+                }
+
+                if ($validVote > 24 || $parseLastVote == false) {
+                    $newVote = new Votes();
+
+                    $newVote->video_id = $arVideo->id;
+                    $newVote->ip = Yii::$app->request->userIP;
+                    $newVote->useragent = Yii::$app->request->userAgent;
+
+                    if ($rating == 'like') {
+                        $rating = 1;
+                    } elseif ($rating == 'dislike') {
+                        $rating = -1;
+                    } else {
+                        $rating = 0;
+                    }
+
+                    $newVote->vote = $rating;
+                    $resultVote = $newVote->save();
+                    $newVote->save();
+
+                    if ($resultVote) {
+                        $result = [
+                            'success' => true,
+                            'message' => 'Ваш голос учтен',
+                        ];
+                    } else {
+                        $result = [
+                            'success' => false,
+                            'message' => 'Что то пошло не так',
+                        ];
+                    }
+                } else {
+                    $result = [
+                        'success' => false,
+                        'message' => 'Голосовать можно раз в сутки',
                     ];
                 }
             } else {
