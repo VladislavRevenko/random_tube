@@ -15,6 +15,15 @@ namespace common\models;
  */
 class Video extends \yii\db\ActiveRecord
 {
+
+    public $allowedHosts = array(
+        "youtube.com",
+        "www.youtube.com",
+        "youtu.be",
+    );
+
+    public $video_id;
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +41,6 @@ class Video extends \yii\db\ActiveRecord
             [['rating', 'views', 'status_id', 'category_id'], 'integer'],
             [['link_video', 'name'], 'string', 'max' => 255],
             [['link_video'], 'required'],
-            [['link_video'], 'unique'],
         ];
     }
 
@@ -57,34 +65,58 @@ class Video extends \yii\db\ActiveRecord
         if (parent::beforeSave($insert)) {
 
             $dataCreateVideo = $this->attributes; //атрибуты нового видео
-            $urlVideo = $dataCreateVideo['link_video'];
-
-            $url_host = parse_url($urlVideo);
-            //Если у нас в записи содержится только id  видео то пропускаем остальное
-            if (empty($url_host['host'])) {
-                return true;
-            }
-
-            if (!empty($url_host['host'])) {
-                if ($url_host['host'] == 'www.youtube.com') {
-                    if (!empty($url_host['query'])) {
-                        $pattern = ['/&feature=share/', '/v=/'];
-                        $url_video = preg_replace($pattern, '', $url_host['query']);
-
-                    }
-                } elseif ($url_host['host'] == 'youtu.be') {
-                    if (!empty($url_host['path'])) {
-                        $url_video = preg_replace('/https:\/\/youtu.be\/\//', '', $url_host['path']);
-                    }
-                }
-                $this->link_video = $url_video;
-                $this->status_id = 1;
-                // Чекаем на уникальность
-                if (Video::find()->where(['link_video' => $url_video])->exists()) {
+            if (empty($dataCreateVideo['link_video'])) {
+                //Если у нас в записи содержится только id  видео то пропускаем остальное
+                if (!empty($dataCreateVideo['video_id'])) {
+                    return true;
+                } else {
                     return false;
                 }
             }
-            return true;
+
+            $urlVideo = $dataCreateVideo['link_video'];
+            $url = parse_url($urlVideo);
+
+            if (empty($url['host'])) {
+                $this->addError('link_video', 'Неправильная ссылка на видео');
+                return false;
+            }
+
+            if (!empty($url['host'])) {
+                if (array_search($url['host'], $this->allowedHosts)!==false) {
+                    $video_id = null;
+
+                    if ($url['host'] == 'www.youtube.com' || $url['host'] == 'youtube.com') {
+                        $query_params = explode('&', $url['query']);
+                        foreach($query_params as $param) {
+                            if (substr($param, 0, 2)=='v=') {
+                                $video_id = substr($param, 2);
+                            }
+                        }
+                    } elseif ($url['host'] == 'youtu.be') {
+                        $path = explode('/', $url['path']);
+                        if (!empty($path[1])) {
+                            $video_id = $path[1];
+                        }
+                    }
+                    if (!empty($video_id)) {
+                        if (Video::find()->where(['link_video' => $video_id])->exists()) {
+                            $this->addError('link_video', 'Это видео уже есть на сайте');
+                            return false;
+                        }
+                        $this->link_video = $video_id;
+                        return true;
+                    } else {
+                        $this->addError('link_video', 'Неправильная ссылка на видео');
+                        return false;
+                    }
+
+                } else {
+                    $this->addError('link_video', 'Поддерживаются только ссылки с www.youtube.com, youtube.com и youtu.be');
+                    return false;
+                }
+            }
+            // return true;
         }
         return false;
     }

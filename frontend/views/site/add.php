@@ -1,4 +1,7 @@
 <form method="POST" id="ajaxForm">
+    <?php if (!empty($category_id)):?>
+    <input type="hidden" name="category_id" value="<?=$category_id?>">
+    <?php endif;?>
     <div class="tile is-ancestor add-video-block">
         <div class="tile is-parent deleteBlock has-addons is-8 center-block">
             <input type="text" name="name_video[]" class="input is-medium name_video is-3" placeholder="Название видео">

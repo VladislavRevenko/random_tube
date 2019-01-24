@@ -66,7 +66,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex($cat)
+    public function actionIndex($cat=null)
     {
         $video_id = Yii::$app->request->post('video_id', false);
 
@@ -75,6 +75,7 @@ class SiteController extends Controller
             if ($searchCat == null) {
                 throw new HttpException(404, 'Категории не существует');
             }
+            $this->view->params['category_code'] = $searchCat->code;
             $video_query = Video::find()->joinWith('directoryStatus')->joinWith('categories')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['categories.code' => $cat]);
         } else {
             $video_query = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['category_id' => null]);
@@ -101,11 +102,15 @@ class SiteController extends Controller
         return $this->render('categories');
     }
 
-    public function actionAdd($cat)
+    public function actionAdd($cat=null)
     {
-        $category = Categories::find()->asArray()->select('id')->where(['code' => $cat])->one();
-        if ($category == null && $cat != '') {
-            throw new HttpException(404, 'Категории не существует');
+        if (!empty($cat)) {
+            $category = Categories::find()->where(['code' => $cat])->one();
+            if (!is_object($category)) {
+                throw new HttpException(404, 'Категории не существует');
+            }
+            $this->view->params['category_code'] = $category->code;
+            return $this->render('add', ['category_id' => $category->id]);
         }
         return $this->render('add');
     }
@@ -115,7 +120,16 @@ class SiteController extends Controller
         if (Yii::$app->request->isAjax) {
             $arrayNames = Yii::$app->request->post('name_video');
             $arrayLinks = Yii::$app->request->post('link_video');
-            $category = Yii::$app->request->post('category');
+            $categoryId= Yii::$app->request->post('category_id', null);
+            if (!empty($categoryId)) {
+                if (!Categories::find()->where(['id' => $categoryId])->exists()) {
+                    $result = [
+                        'status' => 'error',
+                        'message' => 'Категория не существует',
+                    ];
+                    return json_encode($result);
+                }
+            }
 
             if (count($arrayNames) != count($arrayLinks)) {
                 $result = [
@@ -126,48 +140,55 @@ class SiteController extends Controller
             }
 
             $errors = array();
-
-            $allowedHosts = array(
-                "youtube.com",
-                "www.youtube.com",
-                "youtu.be",
-            );
+            $savedVideosCount = 0;
+            $notSavedVideos = [];
 
             for ($count = 0; $count < count($arrayNames); $count++) {
-                $video = new Video();
-                $parseLink = parse_url($arrayLinks[$count]);
-                if ($parseLink !== '' && $parseLink !== null && !empty($parseLink['host'])) {
-                    if (array_search($parseLink['host'], $allowedHosts) == false) {
-                        $result = [
-                            'status' => 'error',
-                            'message' => 'Не соответствующий формат ссылок',
-                        ];
-                        return json_encode($result);
-                    }
-                    $video->link_video = $arrayLinks[$count];
+                if (!empty($arrayLinks[$count])) {
+                    $video = new Video();
                     $video->name = $arrayNames[$count];
-                    if ($category != '') {
-                        $categoryId = Categories::find()->asArray()->where(['code' => $category])->one();
-                        $video->category_id = $categoryId['id'];
+                    $video->link_video = $arrayLinks[$count];
+                    if (!empty($categoryId)) {
+                        $video->category_id = $categoryId;
+                        $video->status_id = 0;
+                    } else {
+                        $video->status_id = 1;
                     }
+                    if ($video->save()) {
+                        $savedVideosCount++;
+                    } else {
+                        $errors = [];
+                        foreach($video->errors as $error) {
+                            foreach($error as $e) {
+                                $errors[] = $e;
+                            }
+                        }
 
-                    if (!$video->save()) {
-                        $errors[] = $video->link_video;
+                        $notSavedVideos[] = [
+                            'name' => $arrayNames[$count],
+                            'link' => $arrayLinks[$count],
+                            'errors' => implode(', ', $errors),
+                        ];
                     }
-
-                } else {
-                    $result = [
-                        'status' => 'error',
-                        'message' => 'Не соответствующий формат ссылок',
-                    ];
-                    return json_encode($result);
                 }
             }
-            $result = [
-                'status' => 'success',
-                'message' => 'Заявка отправлена',
-                'errors' => $errors,
-            ];
+            if ($savedVideosCount>0) {
+                $result = [
+                    'status' => 'success',
+                    'message' => 'Количество добавленных видео - '.$savedVideosCount.'<br/>',
+                ];
+            } else {
+                $result = [
+                    'status' => 'error',
+                    'message' => 'Видео не добавлены<br/>',
+                ];
+            }
+            if (!empty($notSavedVideos)) {
+                foreach($notSavedVideos as $v) {
+                    $result['message'] = $result['message'].'Не добавлено видео - '.$v['name'].'('.$v['link'].')'.'<br/>';
+                    $result['message'] = $result['message'].'По причине - '.$v['errors'].'<br/>';
+                }
+            }
             return json_encode($result);
         } else {
             $result = [

@@ -69,7 +69,7 @@ function ajaxFormSend(category, ajaxForm, url) {
                 jQuery('#result').html(response.message);
                 setTimeout(function () {
                     jQuery('#result').html('');
-                }, 3000);
+                }, 10000);
             }
         },
         error: function (response) {
