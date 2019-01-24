@@ -55,14 +55,16 @@ return [
                     'route' => 'site/categories',
                 ],
                 [
+                    'pattern' => '/add/',
+                    'route' => 'site/add'
+                ],
+                [
                     'pattern' => '/<cat:[\w-]+>/add/',
-                    'route' => 'site/add',
-                    'defaults' => ['cat' => ''],
+                    'route' => 'site/add'
                 ],
                 [
                     'pattern' => '/<cat:[\w-]+>/',
                     'route' => 'site/index',
-                    'defaults' => ['cat' => ''],
                 ],
             ],
         ],
