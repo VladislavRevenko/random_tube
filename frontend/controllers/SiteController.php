@@ -177,6 +177,9 @@ class SiteController extends Controller
                     'status' => 'success',
                     'message' => 'Количество добавленных видео - '.$savedVideosCount.'<br/>',
                 ];
+                if (!empty($categoryId)) {
+                    $result['message'] = $result['message'].'Видеоролики появятся на сайте после модерации.<br/>';
+                }
             } else {
                 $result = [
                     'status' => 'error',
