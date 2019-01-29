@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Template;
+use common\models\Template;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -78,9 +78,17 @@ class TemplateController extends Controller
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
+            $path = Yii::getAlias('@app/../frontend/views/page-templates/default');
+            $model->layout_twig = file_get_contents($path . '/layout.twig');
+            $model->add_twig = file_get_contents($path . '/add.twig');
+            $model->error_twig = file_get_contents($path . '/error.twig');
+            $model->categories_twig = file_get_contents($path . '/categories.twig');
+            $model->index_twig = file_get_contents($path . '/index.twig');
+            $model->style_css = file_get_contents($path . '/style.css');
 
             return $this->render('create', [
                 'model' => $model,
+                'templates' => 'templates',
             ]);
         }
     }
@@ -92,6 +100,17 @@ class TemplateController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            $dir = $model->attributes['code'];
+            if (!empty($dir)) {
+                $pathupdate = Yii::getAlias('@app/../frontend/views/page-templates/' . $dir . '/');
+                $model->layout_twig = file_get_contents($pathupdate . 'layout.twig');
+                $model->add_twig = file_get_contents($pathupdate . 'add.twig');
+                $model->style_css = file_get_contents($pathupdate . 'style.css');
+                $model->error_twig = file_get_contents($pathupdate . 'error.twig');
+                $model->categories_twig = file_get_contents($pathupdate . 'categories.twig');
+                $model->index_twig = file_get_contents($pathupdate . 'index.twig');
+            }
         }
 
         return $this->render('update', [
