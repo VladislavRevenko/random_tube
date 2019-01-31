@@ -116,7 +116,6 @@ class Video extends \yii\db\ActiveRecord
                     return false;
                 }
             }
-            // return true;
         }
         return false;
     }

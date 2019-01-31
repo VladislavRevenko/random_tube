@@ -85,7 +85,6 @@ class TemplateController extends Controller
             $model->categories_twig = file_get_contents($path . '/categories.twig');
             $model->index_twig = file_get_contents($path . '/index.twig');
             $model->style_css = file_get_contents($path . '/style.css');
-
             return $this->render('create', [
                 'model' => $model,
                 'templates' => 'templates',
@@ -121,6 +120,7 @@ class TemplateController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
 
         return $this->redirect(['index']);
     }

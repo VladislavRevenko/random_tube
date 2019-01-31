@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use backend\models\Form;
 
 /**
  * This is the model class for table "categories".
@@ -13,42 +12,34 @@ use backend\models\Form;
  */
 class Categories extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public static function tableName()
     {
         return 'categories';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rules()
     {
         return [
             [['name', 'code'], 'string', 'max' => 255],
             [['code'], 'match', 'pattern' => '/^[a-z-_]+$/', 'message' => 'Символьный код может содержать только a-z'],
-            [['template'], 'integer']
+            [['template_id'], 'integer']
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
             'name' => 'Имя',
             'code' => 'Код',
-            'template' => 'Шаблоны',
+            'template_id' => 'Шаблон',
         ];
     }
 
-    public function getForm()
+    public function getTemplate()
     {
-        return $this->hasOne(Form::className(), ['id' => 'template']);
+        return $this->hasOne(Template::className(), ['id' => 'template_id']);
     }
 }
 

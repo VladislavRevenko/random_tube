@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use common\models\Categories;
+use common\models\Template;
 
 
 ?>
@@ -16,7 +16,7 @@ use common\models\Categories;
 
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'template')->dropDownList(ArrayHelper::map(Categories::find()->select(['id'])->asArray()->all(), 'id', 'template')); ?>
+    <?= $form->field($model, 'template_id')->dropDownList(\yii\helpers\ArrayHelper::map(Template::find()->select(['id', 'code'])->asArray()->all(), 'id', 'code')); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

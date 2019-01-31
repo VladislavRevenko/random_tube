@@ -3,9 +3,6 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\CategoriesSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Категории';
 $this->params['breadcrumbs'][] = $this->title;
@@ -28,6 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'code',
+            'template_id',
+//            [
+//                    'attribute' => 'template',
+//                    'value' => function ($dataProvider) {
+//                        return $dataProvider->template->code;
+//                    }
+//            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

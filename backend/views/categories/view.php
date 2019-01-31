@@ -31,6 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'code',
+            'template_id',
+//            [
+//                'attribute' => 'template',
+//                'value' => function ($dataProvider) {
+//                    return $dataProvider->template->code;
+//                }
+//            ],
         ],
     ]) ?>
 
