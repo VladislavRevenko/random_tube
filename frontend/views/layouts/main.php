@@ -1,15 +1,12 @@
 <?php
-
-/* @var $this \yii\web\View */
-
-/* @var $content string */
-
 use frontend\assets\AppAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
+
+
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -46,32 +43,16 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
-    <?php /*
-    NavBar::begin([
-            'brandLabel' => 'RandomTube',
-            'brandUrl' => Yii::$app->homeUrl,
-            'options' => [
-                'class' => 'nav navbar-fixed-top navbar-inverse',
-            ],
-        ]);
-        $menuItems = [
-            ['label' => 'Add Video', 'url' => ['/site/add']],
-            ['label' => 'Add Video', 'url' => ['/site/add']],
-            ['label' => 'Add Video', 'url' => ['/site/add']],
-        ];
+<?php
+try {
+echo $this->render('/page-templates/default/layout.twig');
+}
+catch (\yii\base\ViewNotFoundException $e)
+{
+echo $this->render('/page-templates/default/layout.twig');
+}
 
-        echo Nav::widget([
-            'options' => ['class' => ' nav navbar-nav navbar-right'],
-            'items' => $menuItems,
-        ]);
-        NavBar::end();
-        */ ?>
-    <div class="container level">
-        <a href="<?= !empty($this->params['category_code']) ? Url::toRoute('/' . $this->params['category_code']) : Yii::$app->homeUrl?>" class="btn level-left"><h4>RandomTube</h4></a>
-        <a href="<?= Url::toRoute('/site/categories/'); ?>" class="btn center-block"><h4>Категории</h4></a>
-        <a href="<?= !empty($this->params['category_code']) ? Url::toRoute('/' . $this->params['category_code'].'/add/') : Url::toRoute('/site/add/')?>" class="btn level-left"><h4>Добавить видео</h4></a>
-    </div>
+?>
 
     <div class="container">
         <?= $content ?>
