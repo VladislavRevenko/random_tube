@@ -104,9 +104,9 @@ class SiteController extends Controller
                     $this->view->params['category_code'] = $category->code;
                     $code = $template->code;
                     try {
-                        return $this->render(Yii::getAlias('page-templates/' . $code . '/categories.twig'));
+                        return $this->render(Yii::getAlias('page-templates/' . $code . '/index.twig'));
                     } catch (\yii\base\ViewNotFoundException $e) {
-                        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
+                        return $this->render(Yii::getAlias('/page-templates/default/index.twig'));
                     }
                 }
                 return $this->render(Yii::getAlias('/page-templates/default/index.twig'), ['video' => $video]);
@@ -134,7 +134,7 @@ class SiteController extends Controller
                 return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
             }
         }
-            return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
     }
 
     public function actionAdd($cat=null)
@@ -152,11 +152,11 @@ class SiteController extends Controller
             $this->view->params['category_code'] = $category->code;
             $code = $template->code;
                 try {
-                    return $this->render(Yii::getAlias('page-templates/'. $code .'/categories.twig'));
+                    return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'));
                 }
                 catch (\yii\base\ViewNotFoundException $e)
                 {
-                    return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
+                    return $this->render(Yii::getAlias('/page-templates/default/add.twig'));
                 }
         }
         return $this->render(Yii::getAlias('/page-templates/default/add.twig'));

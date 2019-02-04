@@ -47,6 +47,8 @@ node_modules
 /frontend/web/images/*
 /frontend/web/upload/*
 /frontend/web/logo/*
+/frontend/views/page-templates/*
+!/frontend/views/page-templates/default
 !/frontend/web/upload/.empty
 !/frontend/web/images/.empty
 !/frontend/web/logo/.empty
@@ -58,4 +60,4 @@ node_modules
 /frontend/web/index.html
 /frontend/web/package-lock.json
 /frontend/web/css/*
-mosmedstrah.ru.*.log
+

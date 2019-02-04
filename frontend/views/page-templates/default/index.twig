@@ -1,28 +1,26 @@
 <?php
 
-/* @var $this yii\web\View */
 
-$this->title = 'RandomTube';
+$this->title = 'RandomTube'
 ?>
 <div class="tile is-ancestor">
     <div class="tile is-parent is-10 center-block">
         <?php
-        if (is_object($video)) {
-            if ($video->link_video) { ?>
+       {%  if (is_object(video))  %}
+       {%     if (video->link_video)  ?> %}
         <div id="ytplayer"></div>
         <script>
             // Load the IFrame Player API code asynchronously.
-            var video_id = '<?= $video->link_video?>';
+            var video_id = ' {% video->link_video?> %}'
             window.onload = function() {
-                createPlayer();
-            };
+                {% createPlayer() %}
 
         </script>
         <?php
-            }
-        } else {
-            echo '<div class="center-block"><h3>Видео временно отсутствуют</h3></div>';
-    }
+         {% endif %}
+        {% else  %}
+           {% echo %} <div class="center-block"><h3>Видео временно отсутствуют</h3></div>
+   {% endif %}
     ?>
 
 </div>

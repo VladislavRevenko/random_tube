@@ -103,12 +103,42 @@ class TemplateController extends Controller
             $dir = $model->attributes['code'];
             if (!empty($dir)) {
                 $pathupdate = Yii::getAlias('@app/../frontend/views/page-templates/' . $dir . '/');
-                $model->layout_twig = file_get_contents($pathupdate . 'layout.twig');
-                $model->add_twig = file_get_contents($pathupdate . 'add.twig');
-                $model->style_css = file_get_contents($pathupdate . 'style.css');
-                $model->error_twig = file_get_contents($pathupdate . 'error.twig');
-                $model->categories_twig = file_get_contents($pathupdate . 'categories.twig');
-                $model->index_twig = file_get_contents($pathupdate . 'index.twig');
+                $path = Yii::getAlias('@app/../frontend/views/page-templates/default');
+                if (file_exists($pathupdate . 'layout.twig')) {
+                    $model->layout_twig = file_get_contents($pathupdate . 'layout.twig');
+                } else {
+                    $model->layout_twig = file_get_contents($path . '/layout.twig');
+                }
+
+                if (file_exists($pathupdate . 'add.twig')) {
+                    $model->add_twig = file_get_contents($pathupdate . 'add.twig');
+                } else {
+                    $model->add_twig = file_get_contents($path . '/add.twig');
+                }
+
+                if (file_exists($pathupdate . 'style.css')) {
+                    $model->style_css = file_get_contents($pathupdate . 'style.css');
+                } else {
+                    $model->style_css = file_get_contents($path . '/style.css');
+                }
+
+                if (file_exists($pathupdate . 'error.twig')) {
+                    $model->categories_twig = file_get_contents($pathupdate . '/error.twig');
+                } else {
+                    $model->error_twig = file_get_contents($path . '/error.twig');
+                }
+
+                if (file_exists($pathupdate . 'categories.twig')) {
+                    $model->categories_twig = file_get_contents($pathupdate . 'categories.twig');
+                } else {
+                    $model->categories_twig = file_get_contents($path . '/categories.twig');
+                }
+
+                if (file_exists($pathupdate . 'index.twig')) {
+                    $model->index_twig = file_get_contents($pathupdate . 'index.twig');
+                } else {
+                    $model->index_twig = file_get_contents($path . '/index.twig');
+                }
             }
         }
 
