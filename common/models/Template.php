@@ -64,14 +64,6 @@ class Template extends \yii\db\ActiveRecord
            return false;
        } else {
            $db_code = Template::find()->where(['code' => $this->code]);
-           if ($code != $db_code) {
-//               $code = $db_code;
-//                rename ($dir_path, );
-           }
-//           $db_code = (Template::find()->where(['code' => $code]));
-//           if ($db_code == $code) {
-//
-//       }
                FileHelper::createDirectory($dir_path, $mode = 0755, true);
                foreach ($this->twig_files as $file_code => $file_name) {
                    if (!empty($this->{$file_code})) {

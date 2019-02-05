@@ -92,24 +92,7 @@ class SiteController extends Controller
             if (Yii::$app->request->isAjax) {
                 return $video->link_video;
             } else {
-                if (!empty($cat)) {
-                    $category = Categories::find()->where(['code' => $cat])->one();
-                    if (!is_object($category)) {
-                        throw new HttpException(404, 'Категории не существует');
-                    }
-                    $template = Template::find()->where(['id' => $category->template_id])->one();
-                    if (!is_object($template)) {
-                        throw new HttpException(404, 'Неправильный шаблон категории');
-                    }
-                    $this->view->params['category_code'] = $category->code;
-                    $code = $template->code;
-                    try {
-                        return $this->render(Yii::getAlias('page-templates/' . $code . '/index.twig'));
-                    } catch (\yii\base\ViewNotFoundException $e) {
-                        return $this->render(Yii::getAlias('/page-templates/default/index.twig'));
-                    }
-                }
-                return $this->render(Yii::getAlias('/page-templates/default/index.twig'), ['video' => $video]);
+                return $this->render('index', ['video' => $video]);
             }
         }
         throw new HttpException(404, 'Нет видео');
@@ -117,24 +100,7 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
-        if (!empty($cat)) {
-            $category = Categories::find()->where(['code' => $cat])->one();
-            if (!is_object($category)) {
-                throw new HttpException(404, 'Категории не существует');
-            }
-            $template = Template::find()->where(['id' => $category->template_id])->one();
-            if (!is_object($template)) {
-                throw new HttpException(404, 'Неправильный шаблон категории');
-            }
-            $this->view->params['category_code'] = $category->code;
-            $code = $template->code;
-            try {
-                return $this->render(Yii::getAlias('page-templates/' . $code . '/categories.twig'));
-            } catch (\yii\base\ViewNotFoundException $e) {
-                return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
-            }
-        }
-        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
+        return $this->render('categories');
     }
 
     public function actionAdd($cat=null)
