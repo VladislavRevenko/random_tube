@@ -20,6 +20,8 @@ use yii\web\HttpException;
  */
 class SiteController extends Controller
 {
+    public $layout = '../page-templates/default/layout.twig';
+
     /**
      * @inheritdoc
      */
@@ -57,9 +59,6 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
@@ -92,7 +91,18 @@ class SiteController extends Controller
             if (Yii::$app->request->isAjax) {
                 return $video->link_video;
             } else {
-                return $this->render('index', ['video' => $video]);
+                $template = Template::find()->where(['id' => $searchCat->template_id])->one();
+                if (is_object($template)) {
+                    $code = $template->code;
+                } else {
+                    $code = 'default';
+                }
+                try {
+                    $this->layout = '../page-templates/'.$code.'/layout.twig';
+                    return $this->render(Yii::getAlias('/page-templates/'. $code .'/index.twig'), ['video' => $video]);
+                } catch (\yii\base\ViewNotFoundException $e) {
+                    return $this->render(Yii::getAlias('/page-templates/default/index.twig'), ['video' => $video]);
+                }
             }
         }
         throw new HttpException(404, 'Нет видео');
@@ -100,7 +110,9 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
-        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
+        //TODO: Получить $categories
+        $categories = [];
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
     }
 
     public function actionAdd($cat=null)
@@ -116,7 +128,6 @@ class SiteController extends Controller
             } else {
                 $code = 'default';
             }
-            $this->view->params['category_code'] = $category->code;
             try {
                 return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'), ['category_id' => $category->id]);
             } catch (\yii\base\ViewNotFoundException $e) {
@@ -296,43 +307,10 @@ class SiteController extends Controller
         }
     }
 
-    public function actionLogin()
+    public function actionError()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    public function actionSignup()
-    {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
-            }
-        }
-
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
+        //TODO: Передавать код ошибки
+        return $this->render(Yii::getAlias('/page-templates/default/error.twig'));
     }
 
 }

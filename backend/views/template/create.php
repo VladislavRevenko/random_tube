@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Form */
 
-$this->title = 'Создать страницы';
-$this->params['breadcrumbs'][] = ['label' => 'Страницы', 'url' => ['index']];
+$this->title = 'Создать шаблон';
+$this->params['breadcrumbs'][] = ['label' => 'Шаблоны', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-create">
