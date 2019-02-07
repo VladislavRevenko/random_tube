@@ -112,7 +112,8 @@ class SiteController extends Controller
     {
         //TODO: Получить $categories
         $categories = [];
-        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
+        $categories = Categories::find()->asArray()->all();
+        return $this->render(Yii::getAlias('/page-templates/tjournal/categories.twig'), ['categories' => $categories]);
     }
 
     public function actionAdd($cat=null)
