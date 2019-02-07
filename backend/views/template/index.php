@@ -6,7 +6,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Страницы';
+$this->title = 'Шаблоны';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-index">
@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать страницы', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать шаблон', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
