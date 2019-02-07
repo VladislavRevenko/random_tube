@@ -108,7 +108,7 @@ AppAsset::register($this);
                 ['label' => 'Статусы', 'url' => ['/directory-status/index']],
                 ['label' => 'Голосование', 'url' => ['/votes/index/']],
                 ['label' => 'Категории', 'url' => ['/categories/index/']],
-                ['label' => 'Страницы', 'url' => ['/template/index/']]
+                ['label' => 'Шаблоны', 'url' => ['/template/index/']]
             ]
         ]
     ];

@@ -94,10 +94,20 @@ function ajaxRating(idButton, srcVideo, url) {
                     jQuery('a#dislike').hide();
                     jQuery('#like').removeClass('fa fa-thumbs-up');
                     jQuery('#like').text('Ваш голос учтен');
+                    setTimeout(function (){
+                        jQuery('a#dislike').show();
+                        jQuery('#like').addClass('fa fa-thumbs-up');
+                        jQuery('#like').text('');
+                    }, 1000);
                 } else if (idButton == 'dislike') {
                     jQuery('a#like').hide();
                     jQuery('#dislike').removeClass('fa fa-thumbs-down');
                     jQuery('#dislike').text('Ваш голос учтен');
+                    setTimeout(function (){
+                        jQuery('a#dislike').show();
+                        jQuery('#like').addClass('fa fa-thumbs-down');
+                        jQuery('#like').text('');
+                    }, 1000);
                 }
             } else if (response.success == false) {
                 alert(response.message);

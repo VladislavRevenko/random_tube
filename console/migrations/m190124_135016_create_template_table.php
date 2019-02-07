@@ -5,14 +5,14 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `form`.
  */
-class m190124_135016_create_form_table extends Migration
+class m190124_135016_create_template_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('form', [
+        $this->createTable('template', [
             'id' => $this->primaryKey(),
             'name' => $this->string(),
             'code' => $this->string(),
@@ -24,6 +24,6 @@ class m190124_135016_create_form_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('form');
+        $this->dropTable('template');
     }
 }

@@ -8,6 +8,7 @@ $this->title = 'RandomTube';
         <?php
         if (is_object($video)) {
             if ($video->link_video) {?>
+
                 <div id="ytplayer"></div>
                 <script>
                     // Load the IFrame Player API code asynchronously.

@@ -20,6 +20,6 @@ class m190128_114138_add_template_column_to_categories_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropColumn('categories', 'template');
+        $this->dropColumn('categories', 'template_id');
     }
 }

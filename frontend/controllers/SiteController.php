@@ -100,30 +100,28 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
-        return $this->render('categories');
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'));
     }
 
     public function actionAdd($cat=null)
     {
-
         if (!empty($cat)) {
             $category = Categories::find()->where(['code' => $cat])->one();
             if (!is_object($category)) {
                 throw new HttpException(404, 'Категории не существует');
             }
             $template = Template::find()->where(['id' => $category->template_id])->one();
-            if (!is_object($template)) {
-                throw new HttpException(404, 'Неправильный шаблон категории');
+            if (is_object($template)) {
+                $code = $template->code;
+            } else {
+                $code = 'default';
             }
             $this->view->params['category_code'] = $category->code;
-            $code = $template->code;
-                try {
-                    return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'));
-                }
-                catch (\yii\base\ViewNotFoundException $e)
-                {
-                    return $this->render(Yii::getAlias('/page-templates/default/add.twig'));
-                }
+            try {
+                return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'), ['category_id' => $category->id]);
+            } catch (\yii\base\ViewNotFoundException $e) {
+                return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['category_id' => $category->id]);
+            }
         }
         return $this->render(Yii::getAlias('/page-templates/default/add.twig'));
     }
@@ -166,6 +164,7 @@ class SiteController extends Controller
                         $video->category_id = $categoryId;
                         $video->status_id = 0;
                     } else {
+                        $video->category_id = 12345;
                         $video->status_id = 1;
                     }
                     if ($video->save()) {
@@ -268,6 +267,7 @@ class SiteController extends Controller
                             'success' => true,
                             'message' => 'Ваш голос учтен',
                         ];
+
                     } else {
                         $result = [
                             'success' => false,
@@ -296,11 +296,6 @@ class SiteController extends Controller
         }
     }
 
-    /**
-     * Logs in a user.
-     *
-     * @return mixed
-     */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
