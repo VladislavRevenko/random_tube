@@ -71,11 +71,11 @@ return [
                     'route' => 'site/categories',
                 ],
                 [
-                    'pattern' => '/add/',
+                    'pattern' => '/<cat:[\w-]+>/add/',
                     'route' => 'site/add'
                 ],
                 [
-                    'pattern' => '/<cat:[\w-]+>/add/',
+                    'pattern' => '/add/',
                     'route' => 'site/add'
                 ],
                 [

@@ -1,17 +1,17 @@
+{{ set(this, 'title', 'RandomTube') }}
 {{ use('yii/helpers/Url') }}
 {% if categories %}
     {% for category in categories %}
-    <div class="tile is-ancestor">
-        <div class="tile is-parent">
-            <div class="center-block">
-                {# TODO: Починить ссылки #}
-                <a href="<?= Url::toRoute('/' . $category['code']); ?>" class="btn btn-default itemCategoryMenu">
-                    <h4><?= $category['name'] ?></h4>
-                </a><br>
+        <div class="tile is-ancestor">
+            <div class="tile is-parent">
+                <div class="center-block">
+                    <a href="{{ path ('/' . category['code']) }}" class="btn btn-default itemCategoryMenu">
+                        <h4>{{ category['name'] }}</h4>
+                    </a><br>
+                </div>
             </div>
         </div>
-    </div>
     {% endfor %}
 {% else %}
-<h1>Категории временно отсутствуют</h1>
+    <h1>Категории временно отсутствуют</h1>
 {% endif %}

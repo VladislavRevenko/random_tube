@@ -3,11 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\Categories;
-use common\models\LoginForm;
 use common\models\Template;
 use common\models\Video;
 use common\models\Votes;
-use frontend\models\SignupForm;
 use Yii;
 use yii\db\Expression;
 use yii\filters\AccessControl;
@@ -91,7 +89,11 @@ class SiteController extends Controller
             if (Yii::$app->request->isAjax) {
                 return $video->link_video;
             } else {
-                $template = Template::find()->where(['id' => $searchCat->template_id])->one();
+                if(!empty($searchCat)) {
+                    $template = Template::find()->where(['id' => $searchCat->template_id])->one();
+                } else {
+                    $template = null;
+                }
                 if (is_object($template)) {
                     $code = $template->code;
                 } else {
@@ -110,8 +112,6 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
-        //TODO: Получить $categories
-        $categories = [];
         $categories = Categories::find()->asArray()->all();
         return $this->render(Yii::getAlias('/page-templates/tjournal/categories.twig'), ['categories' => $categories]);
     }
@@ -310,8 +310,14 @@ class SiteController extends Controller
 
     public function actionError()
     {
+        $exception = Yii::$app->errorHandler->exception;
+        $exceptionMessage = $exception->getMessage();
         //TODO: Передавать код ошибки
-        return $this->render(Yii::getAlias('/page-templates/default/error.twig'));
+        return $this->render(Yii::getAlias('/page-templates/default/error.twig'),
+            [
+                'exceptionMessage' => $exceptionMessage,
+                'exception' => $exception,
+            ]);
     }
 
 }

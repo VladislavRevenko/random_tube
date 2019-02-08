@@ -1,5 +1,23 @@
 {{ use('yii/web/ErrorAction') }}
 
-{{ name }}
-{{ message }}
-{{ exception }}
+{{ set(this, 'title', 'RandomTube') }}
+
+<div class="site-error">
+
+    <div class="alert alert-danger">
+        {{ exceptionMessage }}
+    </div>
+
+    <p>
+        The above error occurred while the Web server was processing your request.
+    </p>
+    <p>
+        Please contact us if you think this is a server error. Thank you.
+    </p>
+    {#{{ name }}#}
+    {#{{ message }}#}
+    {{ code }}
+    {{ exception }}
+    {{ status }}
+
+</div>
