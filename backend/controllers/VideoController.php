@@ -77,6 +77,7 @@ class VideoController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->link_video = 'https://www.youtube.com/watch?v=' . $model->link_video;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

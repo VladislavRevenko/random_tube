@@ -1,5 +1,4 @@
 {{ use('yii/web/ErrorAction') }}
-
 {{ set(this, 'title', 'RandomTube') }}
 
 <div class="site-error">
@@ -14,10 +13,7 @@
     <p>
         Please contact us if you think this is a server error. Thank you.
     </p>
-    {#{{ name }}#}
-    {#{{ message }}#}
-    {{ code }}
-    {{ exception }}
-    {{ status }}
 
+
+    <h3> Код ошибки -  {{ status }} </h3>
 </div>

@@ -64,7 +64,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex($cat=null)
+    public function actionIndex($cat = null)
     {
         $video_id = Yii::$app->request->post('video_id', false);
 
@@ -78,7 +78,7 @@ class SiteController extends Controller
         } else {
             $video_query = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['category_id' => null]);
         }
-        if ($video_id!==false) {
+        if ($video_id !== false) {
             $video = $video_query->andWhere(['not', ['link_video' => $video_id]])->one();
         } else {
             $video = $video_query->one();
@@ -89,7 +89,7 @@ class SiteController extends Controller
             if (Yii::$app->request->isAjax) {
                 return $video->link_video;
             } else {
-                if(!empty($searchCat)) {
+                if (!empty($searchCat)) {
                     $template = Template::find()->where(['id' => $searchCat->template_id])->one();
                 } else {
                     $template = null;
@@ -100,8 +100,8 @@ class SiteController extends Controller
                     $code = 'default';
                 }
                 try {
-                    $this->layout = '../page-templates/'.$code.'/layout.twig';
-                    return $this->render(Yii::getAlias('/page-templates/'. $code .'/index.twig'), ['video' => $video]);
+                    $this->layout = '../page-templates/' . $code . '/layout.twig';
+                    return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), ['video' => $video]);
                 } catch (\yii\base\ViewNotFoundException $e) {
                     return $this->render(Yii::getAlias('/page-templates/default/index.twig'), ['video' => $video]);
                 }
@@ -113,7 +113,21 @@ class SiteController extends Controller
     public function actionCategories()
     {
         $categories = Categories::find()->asArray()->all();
-        return $this->render(Yii::getAlias('/page-templates/tjournal/categories.twig'), ['categories' => $categories]);
+        if (is_object($categories)) {
+            $template = Template::find()->where(['id' => $categories['template_id']])->one();
+            if (is_object($template)) {
+                $code = $template->code;
+            } else {
+                $code = 'default';
+            }
+            try {
+                $this->layout = '../page-templates/' . $code . '/categories.twig';
+                return $this->render(Yii::getAlias('/page-templates/' . $code . '/categories.twig'), ['categories' => $categories]);
+            } catch (\yii\base\ViewNotFoundException $e) {
+                return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
+            }
+        }
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
     }
 
     public function actionAdd($cat=null)
@@ -312,11 +326,14 @@ class SiteController extends Controller
     {
         $exception = Yii::$app->errorHandler->exception;
         $exceptionMessage = $exception->getMessage();
+        $status = $exception->statusCode;
+//        var_dump($exception->statusCode);
         //TODO: Передавать код ошибки
         return $this->render(Yii::getAlias('/page-templates/default/error.twig'),
             [
                 'exceptionMessage' => $exceptionMessage,
                 'exception' => $exception,
+                'status' => $status,
             ]);
     }
 

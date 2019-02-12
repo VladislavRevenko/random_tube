@@ -35,18 +35,16 @@
     {{  void(this.head) }}
 </head>
 <body>
-{{  void(this.beginBody()) }}
-
+{{ void(this.beginBody()) }}
+{% set code = this.params['category_code'] %}
 <div class="wrap">
     <div class="container level">
-        {# TODO: починить#}
-        <a href="{{ path(app.homeUrl) }}" class="btn level-left"><h4>RandomTube</h4></a>
+        <a href="{{ path('site/index') }}" class="btn level-left"><h4>RandomTube</h4></a>
         <a href="{{ path('/categories/') }}" class="btn center-block"><h4>Категории</h4></a>
-        <a href="{{ this.params['category_code'] ? path ('hui') : path ('/add/') }}" class="btn level-left"><h4>Добавить видео</h4></a>
+        <a href="{{ code ? url ('site/add', {'cat':code}) : path ('/add/') }}" class="btn level-left"><h4>Добавить видео</h4></a>
     </div>
-    {#{{ url('site/index', {'cat':category.code}) }}#}
     <div class="container">
-         {{ content | raw}}
+        {{ content | raw}}
     </div>
 </div>
 
