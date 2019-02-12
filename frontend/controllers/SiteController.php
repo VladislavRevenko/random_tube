@@ -113,20 +113,6 @@ class SiteController extends Controller
     public function actionCategories()
     {
         $categories = Categories::find()->asArray()->all();
-        if (is_object($categories)) {
-            $template = Template::find()->where(['id' => $categories['template_id']])->one();
-            if (is_object($template)) {
-                $code = $template->code;
-            } else {
-                $code = 'default';
-            }
-            try {
-                $this->layout = '../page-templates/' . $code . '/categories.twig';
-                return $this->render(Yii::getAlias('/page-templates/' . $code . '/categories.twig'), ['categories' => $categories]);
-            } catch (\yii\base\ViewNotFoundException $e) {
-                return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
-            }
-        }
         return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
     }
 

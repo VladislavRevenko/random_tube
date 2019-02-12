@@ -5,7 +5,7 @@
         <div class="tile is-ancestor">
             <div class="tile is-parent">
                 <div class="center-block">
-                    <a href="{{ path ('/' . category['code']) }}" class="btn btn-default itemCategoryMenu">
+                    <a href="{{ url ('site/index', {cat:category['code']}) }}" class="btn btn-default itemCategoryMenu">
                         <h4>{{ category['name'] }}</h4>
                     </a><br>
                 </div>
