@@ -2,10 +2,10 @@
 {{ use('yii/helpers/Url') }}
 {% if categories %}
     {% for category in categories %}
-        <div class="tile is-ancestor">
-            <div class="tile is-parent">
-                <div class="center-block">
-                    <a href="{{ url ('site/index', {cat:category['code']}) }}" class="btn btn-default itemCategoryMenu">
+        <div class="columns is-ancestor">
+            <div class="column has-text-centered">
+                <div class="categories-buttons">
+                    <a href="{{ url ('site/index', {cat:category['code']}) }}" class="button btn-default itemCategoryMenu has-text-centered">
                         <h4>{{ category['name'] }}</h4>
                     </a><br>
                 </div>

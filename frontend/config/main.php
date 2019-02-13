@@ -50,8 +50,12 @@ return [
                     'options' => [
                         'auto_reload' => true,
                     ],
+                    'extensions' => YII_DEBUG ? [
+                        '\Twig_Extension_Debug',
+                    ] : [],
                     'globals' => [
-                        'Url' => ['class' => '\yii\helpers\Url'],
+                        'url' => '\yii\helpers\Url',
+                        'html' => '\yii\helpers\Html',
                         'Templates' => ['class' => '\common\models\Templates'],
                     ],
                 ],
