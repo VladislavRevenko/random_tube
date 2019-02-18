@@ -130,3 +130,6 @@ a.desc:after {
 .itemCategoryMenu {
     min-width: 100px;
 }
+.btn-default {
+    margin: 20px;
+}
