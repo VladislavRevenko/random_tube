@@ -1,5 +1,6 @@
 {{ set(this, 'title', 'RandomTube') }}
 <form method="POST" id="ajaxForm" style="margin-top: 90px;">
+    <input id="form-token" type="hidden" name="{{ app.request.csrfParam }}" value="{{ app.request.getCsrfToken }}">
     {% if category_id %}
     <input type="hidden" name="category_id" value="{{ category_id }}" >
     {% endif %}
