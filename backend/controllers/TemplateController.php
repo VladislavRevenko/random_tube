@@ -123,7 +123,7 @@ class TemplateController extends Controller
                 }
 
                 if (file_exists($pathupdate . 'error.twig')) {
-                    $model->categories_twig = file_get_contents($pathupdate . '/error.twig');
+                    $model->error_twig = file_get_contents($pathupdate . '/error.twig');
                 } else {
                     $model->error_twig = file_get_contents($path . '/error.twig');
                 }
