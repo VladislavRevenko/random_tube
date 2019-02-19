@@ -19,6 +19,7 @@ use yii\web\HttpException;
 class SiteController extends Controller
 {
     public $layout = '../page-templates/default/layout.twig';
+    
 
     /**
      * @inheritdoc
@@ -99,11 +100,21 @@ class SiteController extends Controller
                 } else {
                     $code = 'default';
                 }
+                $xep = 'xep';
+                $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
                 try {
                     $this->layout = '../page-templates/' . $code . '/layout.twig';
-                    return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), ['video' => $video]);
+                    return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), [
+                        'video' => $video,
+                        'customcss' => $customcss,
+                        'xep' => $xep,
+                    ]);
                 } catch (\yii\base\ViewNotFoundException $e) {
-                    return $this->render(Yii::getAlias('/page-templates/default/index.twig'), ['video' => $video]);
+                    return $this->render(Yii::getAlias('/page-templates/default/index.twig'), [
+                        'video' => $video,
+                        'customcss' => $customcss,
+                        'xep' => $xep,
+                    ]);
                 }
             }
         }
@@ -313,8 +324,6 @@ class SiteController extends Controller
         $exception = Yii::$app->errorHandler->exception;
         $exceptionMessage = $exception->getMessage();
         $status = $exception->statusCode;
-//        var_dump($exception->statusCode);
-        //TODO: Передавать код ошибки
         return $this->render(Yii::getAlias('/page-templates/default/error.twig'),
             [
                 'exceptionMessage' => $exceptionMessage,
@@ -322,5 +331,4 @@ class SiteController extends Controller
                 'status' => $status,
             ]);
     }
-
 }

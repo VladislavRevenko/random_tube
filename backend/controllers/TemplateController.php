@@ -98,7 +98,6 @@ class TemplateController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $dir = $model->attributes['code'];
@@ -165,4 +164,5 @@ class TemplateController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

@@ -8,9 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ this.title }}</title>
     {{ html.csrfMetaTags | raw }}
-
-    <link rel="stylesheet" href="/css/site.css">
     <link rel="stylesheet" href="/css/bulma.css">
+    <style>
+        {{ customcss }}
+        {{ xep }}
+    </style>
     {{  void(this.head) }}
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
@@ -36,7 +38,6 @@
 <body>
 {{ void(this.beginBody()) }}
 {% set code = this.params['category_code'] %}
-<div class="wrap">
     <div class="container">
         <div class="columns level is-desktop is-centered">
             <div class="column is-12-mobile">
@@ -57,7 +58,6 @@
     <div class="container">
         {{ content | raw}}
     </div>
-</div>
 
 <footer class="footer">
     <div class="columns">
@@ -68,7 +68,8 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/custom.js"></script>
 </footer>
-
+{{ customcss }}
+{{ xep }}
 {{  void(this.endBody()) }}
 </body>
 </html>
