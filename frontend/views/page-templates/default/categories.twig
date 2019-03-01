@@ -1,13 +1,9 @@
 {{ set(this, 'title', 'RandomTube') }}
 {{ use('yii/helpers/Url') }}
 {% if categories %}
-    <div class="columns is-ancestor">
-        <div class="column has-text-centered">
-            <div class="categories-buttons">
-                <a href="{{ url ('site/index', {cat:'default'}) }}" class="button btn-default itemCategoryMenu has-text-centered"><h4>Стандартный шаблон</h4></a><br>
-            </div>
-        </div>
-    </div>
+    {{ void(this.beginBlock('customcss')) }}
+    {{ customcss }}
+    {{ void(this.endBlock()) }}
     {% for category in categories %}
         <div class="columns is-ancestor">
             <div class="column has-text-centered">

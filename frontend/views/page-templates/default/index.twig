@@ -17,6 +17,9 @@
         {% endif %}
     </div>
 </div>
+{{ void(this.beginBlock('customcss')) }}
+{{ customcss }}
+{{ void(this.endBlock()) }}
 <div class="columns is-centered">
     <div class="column is-10 is-12-mobile">
         <div class="columns is-mobile">

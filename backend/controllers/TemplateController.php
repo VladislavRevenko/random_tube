@@ -103,7 +103,14 @@ class TemplateController extends Controller
             $dir = $model->attributes['code'];
             if (!empty($dir)) {
                 $pathupdate = Yii::getAlias('@app/../frontend/views/page-templates/' . $dir . '/');
-                $path = Yii::getAlias('@app/../frontend/views/page-templates/default');
+                $path = Yii::getAlias('@app/../frontend/views/page-templates/default/');
+//                foreach ($model->twig_files as $file) {
+//                    if (file_exists($pathupdate . $file)) {
+//                        $model->layout_twig = file_get_contents($pathupdate . $file);
+//                    } else {
+//                        $model->layout_twig = file_get_contents($path . $file);
+//                    }
+//                }
                 if (file_exists($pathupdate . 'layout.twig')) {
                     $model->layout_twig = file_get_contents($pathupdate . 'layout.twig');
                 } else {

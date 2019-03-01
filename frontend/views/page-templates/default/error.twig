@@ -2,7 +2,9 @@
 {{ set(this, 'title', 'RandomTube') }}
 
 <div class="site-error">
-
+    {{ void(this.beginBlock('customcss')) }}
+    {{ customcss }}
+    {{ void(this.endBlock()) }}
     <div class="alert alert-danger">
         {{ exceptionMessage }}
     </div>

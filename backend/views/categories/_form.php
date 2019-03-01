@@ -16,7 +16,9 @@ use common\models\Template;
 
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'template_id')->dropDownList(\yii\helpers\ArrayHelper::map(Template::find()->select(['id', 'code'])->asArray()->all(), 'id', 'code')); ?>
+    <?= $form->field($model, 'template_id')->
+    dropDownList(\yii\helpers\ArrayHelper::map(Template::find()->select(['id', 'code'])->asArray()->all(), 'id', 'code'),
+        ['prompt' => 'Default']); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

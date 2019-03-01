@@ -19,7 +19,9 @@ use yii\web\HttpException;
 class SiteController extends Controller
 {
     public $layout = '../page-templates/default/layout.twig';
-    
+    public $customcss;
+
+
 
     /**
      * @inheritdoc
@@ -68,7 +70,6 @@ class SiteController extends Controller
     public function actionIndex($cat = null)
     {
         $video_id = Yii::$app->request->post('video_id', false);
-
         if (!empty($cat)) {
             $searchCat = Categories::find()->where(['code' => $cat])->one();
             if ($searchCat == null) {
@@ -100,20 +101,15 @@ class SiteController extends Controller
                 } else {
                     $code = 'default';
                 }
-                $xep = 'xep';
                 $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
                 try {
                     $this->layout = '../page-templates/' . $code . '/layout.twig';
                     return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), [
-                        'video' => $video,
-                        'customcss' => $customcss,
-                        'xep' => $xep,
+                        'video' => $video, 'customcss' => $customcss,
                     ]);
                 } catch (\yii\base\ViewNotFoundException $e) {
                     return $this->render(Yii::getAlias('/page-templates/default/index.twig'), [
-                        'video' => $video,
-                        'customcss' => $customcss,
-                        'xep' => $xep,
+                        'video' => $video, 'customcss' => $customcss,
                     ]);
                 }
             }
@@ -123,12 +119,14 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
         $categories = Categories::find()->asArray()->all();
-        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories]);
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories, 'customcss' => $customcss]);
     }
 
     public function actionAdd($cat=null)
     {
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
         if (!empty($cat)) {
             $category = Categories::find()->where(['code' => $cat])->one();
             if (!is_object($category)) {
@@ -141,12 +139,12 @@ class SiteController extends Controller
                 $code = 'default';
             }
             try {
-                return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'), ['category_id' => $category->id]);
+                return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'), ['category_id' => $category->id, 'customcss' => $customcss]);
             } catch (\yii\base\ViewNotFoundException $e) {
-                return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['category_id' => $category->id]);
+                return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['category_id' => $category->id, 'customcss' => $customcss,]);
             }
         }
-        return $this->render(Yii::getAlias('/page-templates/default/add.twig'));
+        return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['customcss' => $customcss]);
     }
 
 
@@ -321,6 +319,7 @@ class SiteController extends Controller
 
     public function actionError()
     {
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
         $exception = Yii::$app->errorHandler->exception;
         $exceptionMessage = $exception->getMessage();
         $status = $exception->statusCode;
@@ -329,6 +328,8 @@ class SiteController extends Controller
                 'exceptionMessage' => $exceptionMessage,
                 'exception' => $exception,
                 'status' => $status,
+                'customcss' => $customcss,
             ]);
     }
+
 }
