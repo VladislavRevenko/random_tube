@@ -55,7 +55,7 @@ return [
                     ] : [],
                     'globals' => [
                         'url' => '\yii\helpers\Url',
-                        'html' => '\yii\helpers\Html',
+                        'html' => ['class' => \yii\helpers\Html::class],
                         'Templates' => ['class' => '\common\models\Templates'],
                     ],
                 ],

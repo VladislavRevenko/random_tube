@@ -10,6 +10,7 @@ use Yii;
 use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\HttpException;
 
@@ -101,7 +102,11 @@ class SiteController extends Controller
                 } else {
                     $code = 'default';
                 }
-                $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
+                try {
+                    $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
+                } catch (\Exception $e) {
+                    $customcss = null;
+                }
                 try {
                     $this->layout = '../page-templates/' . $code . '/layout.twig';
                     return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), [

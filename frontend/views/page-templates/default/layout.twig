@@ -9,9 +9,7 @@
 <title>{{ this.title }}</title>
 {{ html.csrfMetaTags | raw }}
 <link rel="stylesheet" href="/css/bulma.css">
-<style>
-    {{ this.blocks['customcss'] }}
-</style>
+{{ this.blocks['customcss'] | raw }}
 {{ void(this.head) }}
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"

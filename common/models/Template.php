@@ -57,6 +57,11 @@ class Template extends \yii\db\ActiveRecord
         $dir_path = Yii::getAlias('@app/../frontend/views/page-templates/' . $code . '/');
         if (Template::find()->where(['code' => $code])->exists()) {
             if ($this->load(Yii::$app->request->post())) {
+                foreach ($this->twig_files as $file_code => $file_name) {
+                    if (!empty($this->{$file_code})) {
+                        file_put_contents($dir_path . $file_name, $this->{$file_code});
+                    }
+                }
                 return true;
             } else {
                 echo('Такое имя уже существует!');
