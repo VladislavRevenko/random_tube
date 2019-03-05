@@ -17,6 +17,11 @@
             </div>
         </div>
     </div>
+    {{ void(this.beginBlock('customcss')) }}
+    {% if customcss %}
+        <style>{{ customcss }}</style>
+    {% endif %}
+    {{ void(this.endBlock()) }}
     <div class="column has-text-centered">
         <div class="is-8 center-block else-button">
             <input type="button" class="button is-medium center-block" id="addInputLink" value="Еще">

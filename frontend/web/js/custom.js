@@ -30,10 +30,10 @@ function onYouTubePlayerAPIReady() {
 
 function loadVideo() {
     jQuery.ajax({
-        url: location.href,
+        url: window.location.href,
         type: 'POST',
         data: {
-            'video_id': window.video_id,
+            'video_id': window.video_id
         },
         success: function (response) {
             player.loadVideoById(response);

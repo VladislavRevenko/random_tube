@@ -2,7 +2,9 @@
 {{ use('yii/helpers/Url') }}
 {% if categories %}
     {{ void(this.beginBlock('customcss')) }}
-    {{ customcss }}
+    {% if customcss %}
+        <style>{{ customcss }}</style>
+    {% endif %}
     {{ void(this.endBlock()) }}
     {% for category in categories %}
         <div class="columns is-ancestor">

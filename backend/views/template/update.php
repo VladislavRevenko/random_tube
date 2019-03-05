@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model backend\models\Form */
 
 $this->title = 'Редактировать шаблон: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Forms', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Шаблоны', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Изменить';
 ?>
