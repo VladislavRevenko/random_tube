@@ -209,6 +209,7 @@ function setCookieValidationKey($root, $paths)
         $bytes = openssl_random_pseudo_bytes($length);
         $key = strtr(substr(base64_encode($bytes), 0, $length), '+/=', '_-.');
         $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents($file));
+        var_dump($file);
         file_put_contents($file, $content);
     }
 }

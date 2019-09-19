@@ -1,0 +1,40 @@
+{{ set(this, 'title', 'RandomTube') }}
+<form method="POST" id="ajaxForm" style="margin-top: 90px;">
+    <input id="form-token" type="hidden" name="{{ app.request.csrfParam }}" value="{{ app.request.getCsrfToken }}">
+    {% if category_id %}
+    <input type="hidden" name="category_id" value="{{ category_id }}" >
+    {% endif %}
+    <div class="add-video-block">
+        <div class="columns is-parent is-desktop">
+            <div class="column has-text-centered">
+                <input type="text" name="name_video[]" class="input is-medium name_video is-3" placeholder="Название видео">
+            </div>
+            <div class="column has-text-centered">
+                <input type="text" name="link_video[]" class="input is-medium link_video is-3" placeholder="Youtube url">
+            </div>
+            <div class="column is-1-desktop has-text-centered-tablet has-text-centered-mobile">
+                <a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+    </div>
+    {{ void(this.beginBlock('customcss')) }}
+    {% if customcss %}
+        <style>{{ customcss }}</style>
+    {% endif %}
+    {{ void(this.endBlock()) }}
+    <div class="column has-text-centered">
+        <div class="is-8 center-block else-button">
+            <input type="button" class="button is-medium center-block" id="addInputLink" value="Еще">
+        </div>
+    </div>
+    <div class="column">
+        <div class="is-8 center-block has-text-centered">
+            <div class="center-block" id="result"></div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="is-8 center-block has-text-centered">
+            <input type="submit" class="button is-medium center-block" id="submitForm" value="Отправить">
+        </div>
+    </div>
+</form>

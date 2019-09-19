@@ -30,10 +30,10 @@ function onYouTubePlayerAPIReady() {
 
 function loadVideo() {
     jQuery.ajax({
-        url: location.href,
+        url: window.location.href,
         type: 'POST',
         data: {
-            'video_id': window.video_id,
+            'video_id': window.video_id
         },
         success: function (response) {
             player.loadVideoById(response);
@@ -47,7 +47,7 @@ function loadVideo() {
 
 function deleteLinkVideo() {
     jQuery('.deleteLink').on('click', function () {
-        jQuery(this).parent().remove();
+        jQuery(this).parent().parent().remove();
     });
 }
 
@@ -94,10 +94,20 @@ function ajaxRating(idButton, srcVideo, url) {
                     jQuery('a#dislike').hide();
                     jQuery('#like').removeClass('fa fa-thumbs-up');
                     jQuery('#like').text('Ваш голос учтен');
+                    setTimeout(function (){
+                        jQuery('a#dislike').show();
+                        jQuery('#like').addClass('fa fa-thumbs-up');
+                        jQuery('#like').text('');
+                    }, 1000);
                 } else if (idButton == 'dislike') {
                     jQuery('a#like').hide();
                     jQuery('#dislike').removeClass('fa fa-thumbs-down');
                     jQuery('#dislike').text('Ваш голос учтен');
+                    setTimeout(function (){
+                        jQuery('a#dislike').show();
+                        jQuery('#like').addClass('fa fa-thumbs-down');
+                        jQuery('#like').text('');
+                    }, 1000);
                 }
             } else if (response.success == false) {
                 alert(response.message);
@@ -119,10 +129,10 @@ jQuery(document).ready(function() {
     deleteLinkVideo();
     jQuery('#addInputLink').on('click', function () {
         if (count < 10) {
-            jQuery(this).parent().parent().before('<div class="tile is-ancestor add-video-block"> <div class="tile is-parent deleteBlock has-addons is-8 center-block">' +
-                '<input type="text" name="name_video[' + count + ']" class="input is-medium name_video" placeholder="Название видео">' +
-                '<input type="text" name="link_video[' + count + ']" class="input is-medium link_video" placeholder="Youtube url">' +
-                '<a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a>' +
+            jQuery(this).parent().parent().before('<div class="add-video-block"><div class="columns is-parent is-desktop">' +
+                '<div class="column has-text-centered"><input type="text" name="name_video[' + count + ']" class="input is-medium name_video is-3" placeholder="Название видео"></div>' +
+                '<div class="column has-text-centered"><input type="text" name="link_video[' + count + ']" class="input is-medium link_video is-3" placeholder="Youtube url"></div>' +
+                '<div class="column is-1 has-text-centered-tablet has-text-centered-mobile"><a href="javascript:void(0)" id="delete" class="button is-medium deleteLink"><i class="fas fa-trash"></i></a></div>' +
                 '</div></div>');
             deleteLinkVideo();
             count++;

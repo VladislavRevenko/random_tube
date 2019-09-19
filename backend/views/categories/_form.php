@@ -2,10 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use common\models\Template;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Categories */
-/* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="categories-form">
@@ -15,6 +15,10 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'template_id')->
+    dropDownList(\yii\helpers\ArrayHelper::map(Template::find()->select(['id', 'code'])->asArray()->all(), 'id', 'code'),
+        ['prompt' => 'Default']); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

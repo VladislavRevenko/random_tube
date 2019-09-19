@@ -41,6 +41,26 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'view' => [
+            'class' => 'yii\web\View',
+            'renderers' => [
+                'twig' => [
+                    'class' => 'yii\twig\ViewRenderer',
+                    'cachePath' => '@runtime/Twig/cache',
+                    'options' => [
+                        'auto_reload' => true,
+                    ],
+                    'extensions' => YII_DEBUG ? [
+                        '\Twig_Extension_Debug',
+                    ] : [],
+                    'globals' => [
+                        'url' => '\yii\helpers\Url',
+                        'html' => ['class' => \yii\helpers\Html::class],
+                        'Templates' => ['class' => '\common\models\Templates'],
+                    ],
+                ],
+            ],
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -55,11 +75,11 @@ return [
                     'route' => 'site/categories',
                 ],
                 [
-                    'pattern' => '/add/',
+                    'pattern' => '/<cat:[\w-]+>/add/',
                     'route' => 'site/add'
                 ],
                 [
-                    'pattern' => '/<cat:[\w-]+>/add/',
+                    'pattern' => '/add/',
                     'route' => 'site/add'
                 ],
                 [

@@ -1,0 +1,21 @@
+{{ use('yii/web/ErrorAction') }}
+{{ set(this, 'title', 'RandomTube') }}
+
+<div class="site-error">
+    {{ void(this.beginBlock('customcss')) }}
+    {{ customcss }}
+    {{ void(this.endBlock()) }}
+    <div class="alert alert-danger">
+        {{ exceptionMessage }}
+    </div>
+
+    <p>
+        The above error occurred while the Web server was processing your request.
+    </p>
+    <p>
+        Please contact us if you think this is a server error. Thank you.
+    </p>
+
+
+    <h3> Код ошибки -  {{ status }} </h3>
+</div>

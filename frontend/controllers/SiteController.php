@@ -3,14 +3,14 @@
 namespace frontend\controllers;
 
 use common\models\Categories;
-use common\models\LoginForm;
+use common\models\Template;
 use common\models\Video;
 use common\models\Votes;
-use frontend\models\SignupForm;
 use Yii;
 use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\HttpException;
 
@@ -19,6 +19,11 @@ use yii\web\HttpException;
  */
 class SiteController extends Controller
 {
+    public $layout = '../page-templates/default/layout.twig';
+    public $customcss;
+
+
+
     /**
      * @inheritdoc
      */
@@ -56,9 +61,6 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
@@ -66,10 +68,9 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex($cat=null)
+    public function actionIndex($cat = null)
     {
         $video_id = Yii::$app->request->post('video_id', false);
-
         if (!empty($cat)) {
             $searchCat = Categories::find()->where(['code' => $cat])->one();
             if ($searchCat == null) {
@@ -80,7 +81,7 @@ class SiteController extends Controller
         } else {
             $video_query = Video::find()->joinWith('directoryStatus')->orderBy(new Expression('rand()'))->where(['directory_statuses.value' => '1'])->andWhere(['category_id' => null]);
         }
-        if ($video_id!==false) {
+        if ($video_id !== false) {
             $video = $video_query->andWhere(['not', ['link_video' => $video_id]])->one();
         } else {
             $video = $video_query->one();
@@ -91,7 +92,31 @@ class SiteController extends Controller
             if (Yii::$app->request->isAjax) {
                 return $video->link_video;
             } else {
-                return $this->render('index', ['video' => $video]);
+                if (!empty($searchCat)) {
+                    $template = Template::find()->where(['id' => $searchCat->template_id])->one();
+                } else {
+                    $template = null;
+                }
+                if (is_object($template)) {
+                    $code = $template->code;
+                } else {
+                    $code = 'default';
+                }
+                try {
+                    $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
+                } catch (\Exception $e) {
+                    $customcss = null;
+                }
+                try {
+                    $this->layout = '../page-templates/' . $code . '/layout.twig';
+                    return $this->render(Yii::getAlias('/page-templates/' . $code . '/index.twig'), [
+                        'video' => $video, 'customcss' => $customcss,
+                    ]);
+                } catch (\yii\base\ViewNotFoundException $e) {
+                    return $this->render(Yii::getAlias('/page-templates/default/index.twig'), [
+                        'video' => $video, 'customcss' => $customcss,
+                    ]);
+                }
             }
         }
         throw new HttpException(404, 'Нет видео');
@@ -99,21 +124,34 @@ class SiteController extends Controller
 
     public function actionCategories()
     {
-        return $this->render('categories');
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
+        $categories = Categories::find()->asArray()->all();
+        return $this->render(Yii::getAlias('/page-templates/default/categories.twig'), ['categories' => $categories, 'customcss' => $customcss]);
     }
 
     public function actionAdd($cat=null)
     {
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
         if (!empty($cat)) {
             $category = Categories::find()->where(['code' => $cat])->one();
             if (!is_object($category)) {
                 throw new HttpException(404, 'Категории не существует');
             }
-            $this->view->params['category_code'] = $category->code;
-            return $this->render('add', ['category_id' => $category->id]);
+            $template = Template::find()->where(['id' => $category->template_id])->one();
+            if (is_object($template)) {
+                $code = $template->code;
+            } else {
+                $code = 'default';
+            }
+            try {
+                return $this->render(Yii::getAlias('page-templates/'. $code .'/add.twig'), ['category_id' => $category->id, 'customcss' => $customcss]);
+            } catch (\yii\base\ViewNotFoundException $e) {
+                return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['category_id' => $category->id, 'customcss' => $customcss,]);
+            }
         }
-        return $this->render('add');
+        return $this->render(Yii::getAlias('/page-templates/default/add.twig'), ['customcss' => $customcss]);
     }
+
 
     public function actionAddSend()
     {
@@ -152,6 +190,7 @@ class SiteController extends Controller
                         $video->category_id = $categoryId;
                         $video->status_id = 0;
                     } else {
+                        $video->category_id = 12345;
                         $video->status_id = 1;
                     }
                     if ($video->save()) {
@@ -254,6 +293,7 @@ class SiteController extends Controller
                             'success' => true,
                             'message' => 'Ваш голос учтен',
                         ];
+
                     } else {
                         $result = [
                             'success' => false,
@@ -282,48 +322,19 @@ class SiteController extends Controller
         }
     }
 
-    /**
-     * Logs in a user.
-     *
-     * @return mixed
-     */
-    public function actionLogin()
+    public function actionError()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
+        $customcss = file_get_contents(Yii::getAlias('@app/../frontend/views/page-templates/default/style.css'));
+        $exception = Yii::$app->errorHandler->exception;
+        $exceptionMessage = $exception->getMessage();
+        $status = $exception->statusCode;
+        return $this->render(Yii::getAlias('/page-templates/default/error.twig'),
+            [
+                'exceptionMessage' => $exceptionMessage,
+                'exception' => $exception,
+                'status' => $status,
+                'customcss' => $customcss,
             ]);
-        }
-    }
-
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    public function actionSignup()
-    {
-        $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
-                }
-            }
-        }
-
-        return $this->render('signup', [
-            'model' => $model,
-        ]);
     }
 
 }

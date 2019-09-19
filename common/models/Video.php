@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Yii;
+
 /**
  * This is the model class for table "video".
  *
@@ -100,12 +102,17 @@ class Video extends \yii\db\ActiveRecord
                         }
                     }
                     if (!empty($video_id)) {
-                        if (Video::find()->where(['link_video' => $video_id])->exists()) {
-                            $this->addError('link_video', 'Это видео уже есть на сайте');
-                            return false;
+                        if ($this->load(Yii::$app->request->post())) {
+                            $this->link_video = $video_id;
+                            return true;
+                        } else {
+                            if (Video::find()->where(['link_video' => $video_id])->exists()) {
+                                $this->addError('link_video', 'Это видео уже есть на сайте');
+                                return false;
+                            }
+                            $this->link_video = $video_id;
+                            return true;
                         }
-                        $this->link_video = $video_id;
-                        return true;
                     } else {
                         $this->addError('link_video', 'Неправильная ссылка на видео');
                         return false;
@@ -116,7 +123,6 @@ class Video extends \yii\db\ActiveRecord
                     return false;
                 }
             }
-            // return true;
         }
         return false;
     }
